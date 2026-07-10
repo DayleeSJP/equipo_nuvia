@@ -1,0 +1,41 @@
+<section class="h-screen bg-[#F6F7F9] text-[#071326] flex overflow-hidden">
+  <aside class="w-[48px] bg-[#070B10] flex flex-col items-center shrink-0">
+    <div class="mt-4 mb-8 w-8 h-8 flex items-center justify-center rounded-xl text-white font-bold text-sm">N</div>
+
+    <nav class="flex flex-1 flex-col items-center gap-5">
+      <a routerLink="/negocio/dashboard" routerLinkActive="bg-[#7357F4] text-white"
+         [routerLinkActiveOptions]="{ exact: true }"
+         class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center text-[15px] transition"
+         title="Dashboard">⌂</a>
+
+      <a routerLink="/negocio/calendario" routerLinkActive="bg-[#7357F4] text-white"
+         class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center text-[15px] transition"
+         title="Calendario">📅</a>
+
+      <a routerLink="/negocio/personalizacion" routerLinkActive="bg-[#7357F4] text-white"
+         class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center text-[15px] transition"
+         title="Personalización">◇</a>
+    </nav>
+
+    <div class="mb-5 flex flex-col items-center gap-4">
+      <a routerLink="/" class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center" title="Ver catálogo">↗</a>
+      <button type="button" (click)="cerrarSesion()"
+              class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center"
+              title="Cerrar sesión">↪</button>
+    </div>
+  </aside>
+
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    <header class="h-[44px] bg-white border-b border-[#E5E8EE] px-5 flex items-center justify-between shrink-0">
+      <a routerLink="/" class="text-[15px] font-extrabold tracking-[-0.02em] hover:opacity-70 transition">Nuvia</a>
+      <a routerLink="/negocio/personalizacion"
+         class="hidden sm:flex h-[28px] items-center gap-2 rounded-full bg-[#7357F4] px-5 text-[11px] font-bold text-white">
+        Configurar catálogo <span class="text-[10px]">›</span>
+      </a>
+    </header>
+
+    <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</section>

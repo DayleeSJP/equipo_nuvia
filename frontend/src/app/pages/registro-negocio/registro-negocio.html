@@ -1,0 +1,215 @@
+<section class="min-h-screen bg-[#F9F2EC] flex items-center justify-center px-6 py-10">
+
+  <div class="w-full max-w-[620px] bg-white rounded-[28px] shadow-sm border border-[#EFE3DC] p-8">
+
+    <a routerLink="/" class="text-sm text-[#C09C75] font-semibold">
+      ← Volver al inicio
+    </a>
+
+    <div class="mt-6 mb-8">
+      <p class="text-[10px] tracking-[4px] uppercase text-[#C09C75] font-semibold">
+        Registro profesional
+      </p>
+
+      <h1 class="mt-3 text-[30px] font-bold leading-tight text-[#1D1916]">
+        Registra tu negocio en Nuvia
+      </h1>
+
+      <p class="mt-3 text-sm text-[#8B7670] leading-6">
+        Completa la información principal para que tu peluquería pueda aparecer en el catálogo de clientes.
+      </p>
+    </div>
+
+    <div class="flex gap-2 mb-8">
+      <div class="h-1 flex-1 rounded-full" [class.bg-[#C09C75]]="paso >= 1" [class.bg-[#EADFD7]]="paso < 1"></div>
+      <div class="h-1 flex-1 rounded-full" [class.bg-[#C09C75]]="paso >= 2" [class.bg-[#EADFD7]]="paso < 2"></div>
+      <div class="h-1 flex-1 rounded-full" [class.bg-[#C09C75]]="paso >= 3" [class.bg-[#EADFD7]]="paso < 3"></div>
+    </div>
+
+    <p *ngIf="error" class="mb-5 text-sm text-red-500">
+      {{ error }}
+    </p>
+
+    <!-- PASO 1 -->
+    <form *ngIf="paso === 1" (ngSubmit)="continuarCuenta()" class="space-y-5">
+
+      <div>
+        <h2 class="text-xl font-bold text-[#1D1916]">
+          {{ estaLogueado ? 'Confirma tus datos' : 'Crear una cuenta profesional' }}
+        </h2>
+
+        <p class="mt-1 text-sm text-[#8B7670]">
+          {{ estaLogueado ? 'Usaremos estos datos para asociar tu negocio.' : 'Primero necesitamos tus datos personales.' }}
+        </p>
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold mb-2">Nombre</label>
+          <input
+            type="text"
+            name="nombre"
+            [(ngModel)]="nombre"
+            class="w-full h-12 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2">Apellido</label>
+          <input
+            type="text"
+            name="apellido"
+            [(ngModel)]="apellido"
+            class="w-full h-12 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]"
+          />
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-2">Teléfono móvil</label>
+        <input
+          type="text"
+          name="telefono"
+          [(ngModel)]="telefono"
+          placeholder="+51 999 999 999"
+          class="w-full h-12 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]"
+        />
+      </div>
+
+      <div *ngIf="!estaLogueado">
+        <label class="block text-sm font-semibold mb-2">Correo electrónico</label>
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          class="w-full h-12 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]"
+        />
+      </div>
+
+      <div *ngIf="!estaLogueado">
+        <label class="block text-sm font-semibold mb-2">Contraseña</label>
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          class="w-full h-12 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full h-12 rounded-xl bg-[#4A352E] text-white font-semibold">
+        Continuar
+      </button>
+    </form>
+
+    <!-- PASO 2 -->
+    <form *ngIf="paso === 2" (ngSubmit)="continuarNegocio()" class="space-y-6">
+
+      <div>
+        <button type="button" (click)="volver()" class="text-sm text-[#C09C75] font-semibold mb-5">
+          ← Atrás
+        </button>
+
+        <h2 class="text-3xl font-bold text-[#1D1916] leading-tight">
+          ¿Cómo se llama tu negocio?
+        </h2>
+
+        <p class="mt-3 text-sm text-[#8B7670] leading-6">
+          Este será el nombre comercial que verán tus clientes en el catálogo.
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-2">Nombre del negocio</label>
+        <input
+          type="text"
+          name="nombreNegocio"
+          [(ngModel)]="nombreNegocio"
+          placeholder="Ej. Nuvia Beauty Salon"
+          class="w-full h-12 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full h-12 rounded-xl bg-[#4A352E] text-white font-semibold">
+        Continuar
+      </button>
+    </form>
+
+    <!-- PASO 3 -->
+    <form *ngIf="paso === 3" (ngSubmit)="finalizarRegistro()" class="space-y-6">
+
+      <div>
+        <button type="button" (click)="volver()" class="text-sm text-[#C09C75] font-semibold mb-5">
+          ← Atrás
+        </button>
+
+        <h2 class="text-3xl font-bold text-[#1D1916] leading-tight">
+          Indica la ubicación física de tu establecimiento
+        </h2>
+
+        <p class="mt-3 text-sm text-[#8B7670] leading-6">
+          Añade la ubicación principal para que tus clientes puedan encontrarte fácilmente.
+        </p>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-2">Dirección del negocio</label>
+        <input
+          type="text"
+          name="direccion"
+          [(ngModel)]="direccion"
+          placeholder="Ej. Av. Arequipa 1234"
+          class="w-full h-12 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-2">Distrito</label>
+        <select
+          name="distrito"
+          [(ngModel)]="distrito"
+          class="w-full h-12 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]">
+          <option value="">Selecciona un distrito</option>
+          <option>Miraflores</option>
+          <option>San Isidro</option>
+          <option>Barranco</option>
+          <option>Surco</option>
+          <option>La Molina</option>
+          <option>San Borja</option>
+          <option>Los Olivos</option>
+          <option>San Miguel</option>
+        </select>
+      </div>
+
+      <div class="rounded-2xl border border-[#E4D8CF] overflow-hidden bg-[#F9F2EC]">
+        <div class="h-[180px] flex items-center justify-center text-center px-6">
+          <div>
+            <p class="text-3xl mb-2">📍</p>
+            <p class="font-semibold text-[#1D1916]">
+              Vista previa de ubicación
+            </p>
+            <p class="text-sm text-[#8B7670] mt-1">
+              Luego podemos integrar Google Maps.
+            </p>
+          </div>
+        </div>
+
+        <div class="border-t border-[#E4D8CF] p-4 text-sm text-[#6F5D57]">
+          <p class="font-semibold">{{ direccion || 'Dirección pendiente' }}</p>
+          <p>{{ distrito || 'Distrito pendiente' }}, Lima, Perú</p>
+        </div>
+      </div>
+
+      <button
+        type="submit"
+        [disabled]="guardando"
+        class="w-full h-12 rounded-xl bg-[#C09C75] text-white font-semibold disabled:opacity-60">
+        {{ guardando ? 'Guardando...' : 'Finalizar registro' }}
+      </button>
+    </form>
+
+  </div>
+</section>

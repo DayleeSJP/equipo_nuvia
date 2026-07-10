@@ -1,0 +1,48 @@
+# Spring Boot / Java
+HELP.md
+target/
+*.class
+*.jar
+*.war
+*.ear
+
+# Maven
+.mvn/wrapper/maven-wrapper.jar
+
+# IDEs
+.idea/
+*.iws
+*.iml
+*.ipr
+.project
+.classpath
+.settings/
+.vscode/
+
+# NetBeans
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+# Angular / Node
+frontend/node_modules/
+frontend/dist/
+frontend/.angular/
+frontend/tmp/
+frontend/out-tsc/
+frontend/bazel-out/
+
+# Logs
+*.log
+frontend/npm-debug.log
+frontend/yarn-error.log
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Archivos sensibles
+.env

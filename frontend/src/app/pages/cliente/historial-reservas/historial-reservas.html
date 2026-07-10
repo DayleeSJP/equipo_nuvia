@@ -1,0 +1,196 @@
+<section class="min-h-screen bg-white text-black flex flex-col">
+  <div *ngIf="error" class="max-w-[1120px] mx-auto px-5 pt-4">
+    <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ error }}</p>
+  </div>
+
+
+  <!-- HEADER -->
+  <header class="border-b border-neutral-100 sticky top-0 bg-white/95 backdrop-blur z-30">
+    <div class="max-w-[1000px] mx-auto px-5 h-[68px] flex items-center justify-between">
+      <a routerLink="/" class="text-2xl font-bold tracking-tight">Nuvia</a>
+
+      <div class="flex items-center gap-5">
+        <a routerLink="/catalogo/detalle"
+          class="hidden sm:inline-flex items-center h-9 px-4 rounded-full bg-[#C09C75] text-white text-sm font-medium hover:bg-[#AD8863] transition">
+          Nueva cita
+        </a>
+
+        <div class="w-9 h-9 rounded-full bg-[#C09C75] text-white flex items-center justify-center text-sm font-bold ring-2 ring-[#EBD9BE] ring-offset-2 ring-offset-white">
+          {{ nombreCliente.charAt(0) }}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- CONTENIDO -->
+  <div class="flex-1 px-5 py-8">
+    <div class="max-w-[1000px] mx-auto">
+
+      <div class="mb-8">
+        <p class="text-sm text-neutral-500">Bienvenido</p>
+        <h1 class="text-3xl font-bold uppercase">
+          {{ nombreCliente }}
+        </h1>
+      </div>
+
+      <nav class="flex gap-8 border-b border-neutral-200 mb-8 text-sm">
+        <button class="pb-3 border-b-2 border-[#C09C75] font-semibold text-[#1A1A1A]">
+          Mis citas
+        </button>
+      </nav>
+
+      <div class="flex items-center justify-between mb-6">
+        <div>
+          <h2 class="text-2xl font-bold">Próximas citas</h2>
+          <p class="text-sm text-neutral-500 mt-2">
+            Aquí aparecerán las reservas confirmadas por el cliente.
+          </p>
+        </div>
+
+        <p class="text-sm text-neutral-500">
+          {{ citas.length }} cita(s)
+        </p>
+      </div>
+
+      <div *ngIf="citas.length === 0" class="rounded-3xl border border-neutral-200 p-8 text-center">
+        <p class="font-semibold">Aún no tienes citas registradas.</p>
+        <a routerLink="/catalogo/detalle" class="inline-block mt-4 h-10 px-5 rounded-full bg-[#C09C75] text-white text-sm font-semibold leading-10 hover:bg-[#AD8863] transition">
+          Reservar una cita
+        </a>
+      </div>
+
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <article
+          *ngFor="let cita of citas"
+          class="rounded-3xl border border-neutral-200 border-t-4 p-5 shadow-sm bg-white hover:shadow-md transition"
+          [class.border-t-emerald-500]="cita.estado === 'Confirmada'"
+          [class.border-t-rose-500]="cita.estado === 'Cancelada'"
+          [class.border-t-amber-400]="cita.estado !== 'Confirmada' && cita.estado !== 'Cancelada'">
+
+          <p class="text-sm font-bold uppercase mb-4">
+            {{ cita.servicio }}
+          </p>
+
+          <div class="space-y-3 text-sm border-t border-neutral-200 pt-4">
+
+            <div class="flex justify-between gap-4">
+              <span class="text-neutral-500">Negocio</span>
+              <span class="font-semibold text-right">{{ cita.negocio }}</span>
+            </div>
+
+            <div class="flex justify-between gap-4">
+              <span class="text-neutral-500">Fecha</span>
+              <span class="font-semibold">{{ cita.fecha }}</span>
+            </div>
+
+            <div class="flex justify-between gap-4">
+              <span class="text-neutral-500">Hora</span>
+              <span class="font-semibold">{{ cita.hora }}</span>
+            </div>
+
+            <div class="flex justify-between gap-4">
+              <span class="text-neutral-500">Profesional</span>
+              <span class="font-semibold text-right">{{ cita.trabajador }}</span>
+            </div>
+
+            <div class="flex justify-between gap-4">
+              <span class="text-neutral-500">Precio</span>
+              <span class="font-semibold">S/ {{ cita.precio }}</span>
+            </div>
+
+            <div class="flex justify-between gap-4">
+              <span class="text-neutral-500">Estado</span>
+              <span
+                class="px-3 py-1 rounded-full text-xs font-semibold"
+                [class.bg-black]="cita.estado === 'Confirmada'"
+                [class.text-white]="cita.estado === 'Confirmada'"
+                [class.bg-neutral-200]="cita.estado !== 'Confirmada'">
+                {{ cita.estado }}
+              </span>
+            </div>
+
+          </div>
+
+          <div class="mt-5 flex items-center justify-between border-t border-neutral-200 pt-4">
+            
+
+            <button
+              type="button"
+              (click)="cancelarCita(cita.id)"
+              class="text-sm underline hover:text-[#8A6A44] transition disabled:opacity-40 disabled:no-underline"
+              [disabled]="cita.estado === 'Cancelada'">
+              Cancelar
+            </button>
+          </div>
+
+        </article>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="bg-[#351B12] text-[#B8A29B] py-10 px-6">
+    <div class="max-w-[1100px] mx-auto">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div>
+          <h3 class="text-white font-semibold text-[18px] mb-3">
+            Nuvia
+          </h3>
+
+          <p class="text-[13px] leading-6 text-[#9E8881] max-w-[220px]">
+            Reserva citas en peluquerías, barberías y salones de belleza en Lima.
+          </p>
+        </div>
+
+        <div>
+          <h4 class="text-[10px] uppercase tracking-[2px] text-white mb-3">
+            Clientes
+          </h4>
+
+          <ul class="space-y-2 text-[13px]">
+            <li>Buscar salones</li>
+            <li>Cómo reservar</li>
+            <li>Preguntas</li>
+            <li>App móvil</li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-[10px] uppercase tracking-[2px] text-white mb-3">
+            Negocios
+          </h4>
+
+          <ul class="space-y-2 text-[13px]">
+            <li>Registrar negocio</li>
+            <li>Planes</li>
+            <li>Centro de ayuda</li>
+            <li>Partners</li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="text-[10px] uppercase tracking-[2px] text-white mb-3">
+            Contacto
+          </h4>
+
+          <ul class="space-y-2 text-[13px]">
+            <li>hola@nuvia.pe</li>
+            <li>+51 999 888 777</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="mt-8 pt-5 border-t border-[#4B2C22] flex flex-col sm:flex-row justify-between items-center text-[12px] text-[#8F7770]">
+        <p>© 2026 Nuvia. Todos los derechos reservados.</p>
+
+        <div class="flex gap-5 mt-3 sm:mt-0">
+          <a href="#">Términos</a>
+          <a href="#">Privacidad</a>
+          <a href="#">Cookies</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+</section>

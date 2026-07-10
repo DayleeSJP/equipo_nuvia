@@ -1,0 +1,573 @@
+<main class="bg-[#F9F2EC] text-[#21120F] overflow-x-hidden">
+
+    <!-- SECCIÓN 1 -->
+    <section class="min-h-screen bg-[#F9F2EC] flex flex-col overflow-hidden">
+        <header class="h-[68px] bg-[#F9F2EC] border-b border-[#EADFD7]">
+            <div class="max-w-[1280px] mx-auto h-full px-6 flex items-center justify-between">
+
+                <!-- LOGO -->
+                <a routerLink="/" class="text-[22px] font-bold text-[#1D1916]">
+                    Nuvia
+                </a>
+
+                <!-- NAV CENTRO -->
+                <nav class="hidden md:flex gap-8 text-[14px] text-[#7B6B66]">
+                    <a class="text-[#C98044] underline underline-offset-2 transition-colors duration-200 hover:text-[#745A39]"
+                        href="#">Inicio</a>
+                    <a class="transition-colors duration-200 hover:text-[#745A39]" href="#clientes">Para Clientes</a>
+                    <a class="transition-colors duration-200 hover:text-[#745A39]" href="#negocios">Para Negocios</a>
+                </nav>
+
+                <!-- DERECHA -->
+                <div class="hidden md:flex items-center gap-3 text-[14px] relative">
+
+                    <a routerLink="/registro-negocio"
+                        class="h-10 px-6 rounded-full border border-[#D8C9BF] text-[#7B6B66] flex items-center bg-[#F9F2EC] transition-colors duration-200 hover:bg-[#E6D4BD] hover:text-[#4A352E]">
+                        Registra tu negocio
+                    </a>
+
+                    <!-- SI NO HAY SESIÓN -->
+                    <ng-container *ngIf="!usuarioActual">
+                        <a routerLink="/seleccion-usuario"
+                            class="h-10 px-6 rounded-full border border-[#D8C9BF] text-[#7B6B66] flex items-center bg-[#F9F2EC] transition-colors duration-200 hover:bg-[#E6D4BD] hover:text-[#4A352E]">
+                            Iniciar sesión
+                        </a>
+
+                        <a routerLink="/registro-cliente"
+                            class="h-10 px-6 rounded-full bg-[#4A352E] text-white font-semibold flex items-center transition-colors duration-200 hover:bg-[#3c2f27] hover:text-[#ffffff]">
+                            Registro
+                        </a>
+                    </ng-container>
+
+                    <!-- SI HAY SESIÓN -->
+                    <div *ngIf="usuarioActual" class="relative">
+                        <button type="button" (click)="toggleMenuPerfil()"
+                            class="h-11 pl-1 pr-4 rounded-full border border-[#D8C9BF] bg-white flex items-center gap-2 shadow-sm">
+
+                            <span
+                                class="w-9 h-9 rounded-full bg-[#C09C75] text-white flex items-center justify-center font-bold">
+                                {{ inicialUsuario() }}
+                            </span>
+
+                            <span class="text-[#4A352E] text-[13px]">
+                                {{ menuPerfilAbierto ? '⌃' : '⌄' }}
+                            </span>
+                        </button>
+
+                        <!-- MENÚ PERFIL -->
+                        <div *ngIf="menuPerfilAbierto"
+                            class="absolute right-0 top-14 w-[240px] bg-white rounded-2xl shadow-xl border border-[#EFE3DC] p-4 z-50">
+
+                            <p class="font-bold text-[#1D1916] text-[15px] mb-3">
+                                {{ nombreCompleto() }}
+                            </p>
+
+                            <a *ngIf="!esNegocio()" routerLink="/cliente/mis-reservas"
+                                class="flex items-center gap-3 h-9 rounded-xl px-2 text-[#4A352E] hover:bg-[#F9F2EC]">
+                                <span>📅</span>
+                                <span>Mis reservas</span>
+                            </a>
+
+                            <a *ngIf="esNegocio()" routerLink="/negocio/dashboard"
+                                class="flex items-center gap-3 h-9 rounded-xl px-2 text-[#4A352E] hover:bg-[#F9F2EC]">
+                                <span>🏪</span>
+                                <span>Panel del negocio</span>
+                            </a>
+
+                            <button type="button" (click)="cerrarSesion()"
+                                class="mt-2 w-full flex items-center gap-3 h-9 rounded-xl px-2 text-left text-red-500 hover:bg-red-50">
+                                <span>↪</span>
+                                <span>Cerrar sesión</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </header>
+
+        <div class="flex-1 flex items-center justify-center px-5">
+            <div class="max-w-[690px] text-center -translate-y-5">
+                <p class="text-[10px] tracking-[6px] uppercase text-[#745A39] mb-5">
+                    El futuro de la estética en Lima
+                </p>
+
+                <h1 class="text-[34px] sm:text-[43px] leading-[1.02] font-extrabold tracking-[-1.7px]">
+                    Reserva tu cita en las
+                    <span class="text-[#745A39]">mejores peluquerías</span>
+                    de Lima en segundos
+                </h1>
+
+                <p class="mt-7 text-[13px] leading-[1.55] text-[#8B7670] max-w-[500px] mx-auto">
+                    Encuentra estilistas y barberos cerca de ti, compara precios, visualiza horarios
+                    disponibles en tiempo real y asegura tu cupo de forma gratuita y sin llamadas.
+                </p>
+
+                <form
+                    class="mt-9 mx-auto bg-white rounded-[10px] shadow-sm p-2 flex flex-col sm:flex-row max-w-[662px]">
+
+                    <label class="flex-1 text-left px-4 py-2 sm:border-r border-[#EADFD7]">
+                        <span class="block text-[8px] tracking-[.8px] uppercase text-[#C98044] mb-1">
+                            Ubicación
+                        </span>
+
+                        <select name="ubicacion" [(ngModel)]="ubicacionSeleccionada"
+                            class="w-full bg-transparent outline-none text-[12px] text-[#2B1B18]">
+
+                            <option value="">Todos los distritos</option>
+                            <option value="Miraflores">Miraflores</option>
+                            <option value="San Isidro">San Isidro</option>
+                            <option value="Barranco">Barranco</option>
+                            <option value="La Molina">La Molina</option>
+                            <option value="Surco">Surco</option>
+                        </select>
+                    </label>
+
+                    <label class="flex-1 text-left px-4 py-2 sm:border-r border-[#EADFD7]">
+                        <span class="block text-[8px] tracking-[.8px] uppercase text-[#C98044] mb-1">
+                            Fecha deseada
+                        </span>
+
+                        <input type="date" name="fecha" [(ngModel)]="fechaSeleccionada"
+                            class="w-full bg-transparent text-[12px] outline-none text-[#2B1B18]">
+                    </label>
+
+                    <label class="flex-1 text-left px-4 py-2">
+                        <span class="block text-[8px] tracking-[.8px] uppercase text-[#C98044] mb-1">
+                            Servicio
+                        </span>
+
+                        <select name="servicio" [(ngModel)]="servicioSeleccionado"
+                            class="w-full bg-transparent outline-none text-[12px] text-[#2B1B18]">
+
+                            <option value="">Todos los servicios</option>
+                            <option value="Corte">Corte</option>
+                            <option value="Tinte">Tinte</option>
+                            <option value="Manicure">Manicure</option>
+                            <option value="Cejas">Cejas</option>
+                            <option value="Spa">Spa</option>
+                            <option value="Barbería">Barbería</option>
+                        </select>
+                    </label>
+
+                    <button type="button" (click)="buscarCatalogo()"
+                        class="h-12 px-8 rounded-xl bg-[#D48B45] text-white font-bold">
+                        Buscar
+                    </button>
+                </form>
+                <div *ngIf="sinResultados" class="max-w-[1180px] mx-auto px-6 mt-8 text-center text-[#7B6B66] text-sm">
+
+                    No se encontraron negocios con esos filtros.
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 2 -->
+    <section class="min-h-screen bg-white flex items-center justify-center overflow-hidden py-14">
+        <div class="w-full max-w-[1020px] px-5">
+
+            <div class="mb-9">
+                <h2 class="text-[16px] font-extrabold mb-5">Recomendado</h2>
+
+                <div class="relative">
+                    <div #c1 class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth cursor-grab">
+                        <article *ngFor="let card of recomendados" [routerLink]="['/catalogo/detalle', card.id]"
+                            class="min-w-[240px] cursor-pointer">
+                            <div class="relative h-[140px] rounded-[10px] overflow-hidden">
+                                <img [src]="card.imagen" [alt]="card.nombre" class="w-full h-full object-cover">
+                                <span
+                                    class="absolute top-3 left-3 bg-white text-[10px] font-bold px-3 py-1 rounded-full">
+                                    Destacados
+                                </span>
+                                <button
+                                    class="absolute top-3 right-3 bg-white w-[25px] h-[25px] rounded-full text-[#777]">
+                                    ♡
+                                </button>
+                            </div>
+
+                            <div class="mt-2">
+                                <div class="flex justify-between gap-2">
+                                    <h3 class="text-[12px] font-extrabold truncate">
+                                        {{ card.nombre }} 💜
+                                    </h3>
+                                    <span class="text-[10px] font-bold">⭐ {{ card.rating }}</span>
+                                </div>
+                                <p class="text-[9px] text-[#696969] mt-1 truncate">
+                                    {{ card.direccion }}
+                                </p>
+                                <p class="text-[9px] text-[#696969] mt-1">
+                                    {{ card.tipo }}
+                                </p>
+                            </div>
+                        </article>
+                    </div>
+
+                    <button type="button" (click)="slide(c1)"
+                        class="absolute right-[-14px] top-[64px] bg-white shadow-md w-[29px] h-[29px] rounded-full text-[18px]">
+                        ›
+                    </button>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-[16px] font-extrabold mb-5">Nuevo</h2>
+
+                <div class="relative">
+                    <div #c2 class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth cursor-grab">
+                        <article *ngFor="let card of nuevos" (click)="verDetalle(card)"
+                            class="min-w-[240px] cursor-pointer">
+                            <div class="relative h-[140px] rounded-[10px] overflow-hidden">
+                                <img [src]="card.imagen" [alt]="card.nombre" class="w-full h-full object-cover">
+                                <span
+                                    class="absolute top-3 left-3 bg-white text-[10px] font-bold px-3 py-1 rounded-full">
+                                    Destacados
+                                </span>
+                                <button
+                                    class="absolute top-3 right-3 bg-white w-[25px] h-[25px] rounded-full text-[#777]">
+                                    ♡
+                                </button>
+                            </div>
+
+                            <div class="mt-2">
+                                <div class="flex justify-between gap-2">
+                                    <h3 class="text-[12px] font-extrabold truncate">
+                                        {{ card.nombre }} 💜
+                                    </h3>
+                                    <span class="text-[10px] font-bold">⭐ {{ card.rating }}</span>
+                                </div>
+                                <p class="text-[9px] text-[#696969] mt-1 truncate">
+                                    {{ card.direccion }}
+                                </p>
+                                <p class="text-[9px] text-[#696969] mt-1">
+                                    {{ card.tipo }}
+                                </p>
+                            </div>
+                        </article>
+                    </div>
+
+                    <button type="button" (click)="slide(c2)"
+                        class="absolute right-[-14px] top-[64px] bg-white shadow-md w-[29px] h-[29px] rounded-full text-[18px]">
+                        ›
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 3 -->
+    <section id="clientes" class="min-h-screen bg-[#1D1916] text-white flex items-center overflow-hidden py-14">
+        <div class="max-w-[1050px] mx-auto w-full px-6">
+            <p class="uppercase tracking-[4px] text-[#C09C75] text-[9px] font-semibold mb-3">
+                Proceso
+            </p>
+
+            <h2 class="font-['Playfair_Display'] text-[34px] sm:text-[42px] leading-none mb-10">
+                Simple. Rápido.
+                <span class="italic text-[#C09C75]">Efectivo.</span>
+            </h2>
+
+            <div class="grid md:grid-cols-2 gap-10 md:gap-16">
+
+                <div>
+                    <h3 class="uppercase tracking-[3px] text-[#C09C75] text-[10px] font-semibold mb-5">
+                        Para clientes
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <span class="text-[#C09C75] text-[12px] font-semibold w-5">01</span>
+                            <div>
+                                <h4 class="text-[15px] font-medium">Buscar</h4>
+                                <p class="text-[12px] leading-5 text-[#9C948F]">
+                                    Filtra por distrito, servicio, precio y horario.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <span class="text-[#C09C75] text-[12px] font-semibold w-5">02</span>
+                            <div>
+                                <h4 class="text-[15px] font-medium">Comparar</h4>
+                                <p class="text-[12px] leading-5 text-[#9C948F]">
+                                    Revisa precio, duración, rating y disponibilidad.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <span class="text-[#C09C75] text-[12px] font-semibold w-5">03</span>
+                            <div>
+                                <h4 class="text-[15px] font-medium">Elegir</h4>
+                                <p class="text-[12px] leading-5 text-[#9C948F]">
+                                    Selecciona especialista y horario disponible.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <span class="text-[#C09C75] text-[12px] font-semibold w-5">04</span>
+                            <div>
+                                <h4 class="text-[15px] font-medium">Reservar</h4>
+                                <p class="text-[12px] leading-5 text-[#9C948F]">
+                                    Confirma tu cita en segundos.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="negocios">
+                    <h3 class="uppercase tracking-[3px] text-[#C09C75] text-[10px] font-semibold mb-5">
+                        Para negocios
+                    </h3>
+
+                    <div class="space-y-4">
+                        <div class="flex gap-4">
+                            <span class="text-[#C09C75] text-[12px] font-semibold w-5">01</span>
+                            <div>
+                                <h4 class="text-[15px] font-medium">Registrar</h4>
+                                <p class="text-[12px] leading-5 text-[#9C948F]">
+                                    Crea el perfil de tu salón.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <span class="text-[#C09C75] text-[12px] font-semibold w-5">02</span>
+                            <div>
+                                <h4 class="text-[15px] font-medium">Publicar</h4>
+                                <p class="text-[12px] leading-5 text-[#9C948F]">
+                                    Agrega servicios, precios y horarios.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <span class="text-[#C09C75] text-[12px] font-semibold w-5">03</span>
+                            <div>
+                                <h4 class="text-[15px] font-medium">Gestionar</h4>
+                                <p class="text-[12px] leading-5 text-[#9C948F]">
+                                    Administra reservas y disponibilidad.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-4">
+                            <span class="text-[#C09C75] text-[12px] font-semibold w-5">04</span>
+                            <div>
+                                <h4 class="text-[15px] font-medium">Crecer</h4>
+                                <p class="text-[12px] leading-5 text-[#9C948F]">
+                                    Destaca tu perfil y atrae clientes.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 4 -->
+    <section class="min-h-screen bg-[#F9F2EC] flex items-center justify-center overflow-hidden py-14">
+        <div class="w-full max-w-[980px] px-6">
+            <div class="mb-9">
+                <p class="text-[9px] tracking-[4px] uppercase text-[#C09C75] font-semibold mb-3">
+                    Planes para negocios
+                </p>
+
+                <h2 class="text-[30px] sm:text-[38px] leading-[1.08] font-semibold tracking-[-1px] text-[#241512]">
+                    Crece con el plan<br>
+                    <span class="italic text-[#C09C75] font-['Playfair_Display']">
+                        que más te conviene.
+                    </span>
+                </h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-5">
+                <div class="bg-white rounded-[18px] p-7 min-h-[390px] border border-[#EFE3DC]">
+                    <h3 class="text-[18px] font-semibold text-[#241512]">
+                        Plan Standard
+                    </h3>
+
+                    <p class="text-[11px] text-[#9A8580] mt-1">
+                        Para comenzar a publicar
+                    </p>
+
+                    <p class="mt-5 text-[34px] leading-none font-bold text-[#351B12]">
+                        Gratis
+                        <span class="text-[11px] font-normal text-[#9A8580]">
+                            Sin costo mensual
+                        </span>
+                    </p>
+
+                    <ul class="mt-6 space-y-3 text-[12px] text-[#6F5D57]">
+                        <li>✓ Perfil básico de negocio</li>
+                        <li>✓ Agregar hasta 5 servicios</li>
+                        <li>✓ Recibir reservas</li>
+                        <li>✓ Estadísticas básicas</li>
+                        <li>✓ Soporte por email</li>
+                    </ul>
+
+                    <button
+                        class="mt-7 w-full h-[38px] rounded-[9px] bg-[#F1E7DF] text-[#4A352E] text-[12px] font-semibold">
+                        Comenzar gratis
+                    </button>
+                </div>
+
+                <div class="relative bg-[#4A352E] text-white rounded-[18px] p-7 min-h-[390px]">
+                    <span
+                        class="absolute top-6 right-6 bg-[#C09C75] text-white text-[8px] tracking-[1px] font-bold px-3 py-1.5 rounded-full">
+                        MÁS POPULAR
+                    </span>
+
+                    <h3 class="text-[18px] font-semibold">
+                        Plan Premium
+                    </h3>
+
+                    <p class="text-[11px] text-[#CDBAB2] mt-1">
+                        Para negocios en crecimiento
+                    </p>
+
+                    <p class="mt-5 text-[38px] leading-none font-bold">
+                        S/49
+                        <span class="text-[12px] font-normal text-[#CDBAB2]">
+                            /mes
+                        </span>
+                    </p>
+
+                    <p class="text-[10px] text-[#CDBAB2] mt-1">
+                        Cancela cuando quieras
+                    </p>
+
+                    <ul class="mt-5 space-y-2.5 text-[12px] text-[#E7D6CF]">
+                        <li>✓ Todo lo de Standard</li>
+                        <li>✓ Perfil destacado</li>
+                        <li>✓ Servicios ilimitados</li>
+                        <li>✓ Estadísticas avanzadas</li>
+                        <li>✓ Soporte prioritario</li>
+                        <li>✓ Promociones personalizadas</li>
+                        <li>✓ Integración con redes sociales</li>
+                    </ul>
+
+                    <button
+                        class="mt-6 w-full h-[38px] rounded-[9px] bg-[#C09C75] text-white text-[12px] font-semibold">
+                        Activar Premium
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SECCIÓN 5 -->
+    <section class="min-h-screen bg-white flex items-center justify-center text-center overflow-hidden py-14">
+        <div class="max-w-[760px] px-6">
+            <p class="text-[11px] tracking-[5px] uppercase text-[#C09C75] font-bold mb-6">
+                Únete hoy
+            </p>
+
+            <h2 class="text-[38px] sm:text-[45px] font-extrabold leading-[1.08]">
+                ¿Lista para tu próxima<br>
+                <span class="text-[#C09C75]">cita de belleza?</span>
+            </h2>
+
+            <p class="mt-6 text-[16px] text-[#967F78]">
+                Más de 1,200 salones en Lima te esperan. Reserva gratis en segundos, sin descargas.
+            </p>
+
+            <div class="mt-10 flex flex-col sm:flex-row gap-4 justify-center">
+                <button class="h-[52px] px-9 rounded-full bg-[#C09C75] text-white font-bold">
+                    Reservar ahora →
+                </button>
+                <button class="h-[52px] px-9 rounded-full border border-[#CDBDB4] font-bold">
+                    Registrar mi negocio
+                </button>
+            </div>
+
+            <div class="mt-16 pt-10 border-t border-[#E4D8CF] grid grid-cols-3 gap-8">
+                <div>
+                    <b class="text-[34px]">1,200+</b>
+                    <p class="text-[14px] text-[#9A8580]">Salones registrados</p>
+                </div>
+
+                <div>
+                    <b class="text-[34px]">48K+</b>
+                    <p class="text-[14px] text-[#9A8580]">Reservas realizadas</p>
+                </div>
+
+                <div>
+                    <b class="text-[34px]">4.8 <span class="text-[#C09C75]">★</span></b>
+                    <p class="text-[14px] text-[#9A8580]">Calificación promedio</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#351B12] text-[#B8A29B] py-10 px-6">
+        <div class="max-w-[1100px] mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-white font-semibold text-[18px] mb-3">
+                        Nuvia
+                    </h3>
+
+                    <p class="text-[13px] leading-6 text-[#9E8881] max-w-[220px]">
+                        Reserva citas en peluquerías, barberías y salones de belleza en Lima.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-[10px] uppercase tracking-[2px] text-white mb-3">
+                        Clientes
+                    </h4>
+
+                    <ul class="space-y-2 text-[13px]">
+                        <li>Buscar salones</li>
+                        <li>Cómo reservar</li>
+                        <li>Preguntas</li>
+                        <li>App móvil</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-[10px] uppercase tracking-[2px] text-white mb-3">
+                        Negocios
+                    </h4>
+
+                    <ul class="space-y-2 text-[13px]">
+                        <li>Registrar negocio</li>
+                        <li>Planes</li>
+                        <li>Centro de ayuda</li>
+                        <li>Partners</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-[10px] uppercase tracking-[2px] text-white mb-3">
+                        Contacto
+                    </h4>
+
+                    <ul class="space-y-2 text-[13px]">
+                        <li>hola@nuvia.pe</li>
+                        <li>+51 999 888 777</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div
+                class="mt-8 pt-5 border-t border-[#4B2C22] flex flex-col sm:flex-row justify-between items-center text-[12px] text-[#8F7770]">
+                <p>© 2026 Nuvia. Todos los derechos reservados.</p>
+
+                <div class="flex gap-5 mt-3 sm:mt-0">
+                    <a href="#">Términos</a>
+                    <a href="#">Privacidad</a>
+                    <a href="#">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+</main>

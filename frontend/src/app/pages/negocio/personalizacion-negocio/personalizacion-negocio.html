@@ -1,0 +1,503 @@
+<main class="p-5">
+  <div *ngIf="error" class="mx-auto max-w-[1180px] px-5 pt-4">
+    <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ error }}</p>
+  </div>
+
+
+  <div class="w-full max-w-[1080px] mx-auto">
+
+    <!-- ENCABEZADO -->
+    <div class="mb-5 flex items-center justify-between">
+      <div>
+        <h2 class="text-2xl font-bold text-[#1D1916]">Personalización</h2>
+        <p class="text-sm text-[#8B7670]">
+          Configura la información que verá el cliente en el catálogo y en la vista de tu negocio.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        (click)="guardarCambios()"
+        class="h-9 px-5 rounded-full bg-[#4A352E] text-white text-sm font-semibold">
+        {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+      </button>
+    </div>
+
+    <!-- SECCIÓN PORTADA -->
+    <section class="bg-white rounded-3xl border border-[#E8DDD6] p-5 mb-5">
+      <div class="grid lg:grid-cols-[320px_1fr] gap-5 items-center">
+
+        <div>
+          <h3 class="text-xl font-bold text-[#1D1916]">Imagen de portada</h3>
+          <p class="text-sm text-[#8B7670] mt-1 leading-6">
+            Esta será la imagen principal de tu negocio. Aparecerá en el catálogo del inicio y en la vista del cliente.
+          </p>
+
+          <label class="mt-4 h-9 px-4 rounded-full bg-[#C09C75] text-white text-sm font-semibold inline-flex items-center justify-center cursor-pointer">
+            Seleccionar imagen
+            <input
+              type="file"
+              accept="image/*"
+              (change)="seleccionarPortada($event)"
+              class="hidden">
+          </label>
+        </div>
+
+        <div class="h-[180px] rounded-3xl bg-[#F7F4F0] border border-dashed border-[#D8C9BF] overflow-hidden flex items-center justify-center">
+          <img
+            *ngIf="portadaPreview"
+            [src]="portadaPreview"
+            class="w-full h-full object-cover">
+
+          <div *ngIf="!portadaPreview" class="text-center px-6">
+            <p class="text-3xl mb-2">🖼️</p>
+            <p class="font-semibold text-[#1D1916]">Vista previa de portada</p>
+            <p class="text-sm text-[#8B7670] mt-1">
+              Sube una sola imagen principal.
+            </p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- MENÚ DE SERVICIOS -->
+    <section class="bg-white rounded-3xl border border-[#E8DDD6] p-5 mb-5">
+
+      <div class="flex items-center justify-between mb-5">
+        <div>
+          <h3 class="text-2xl font-bold text-[#1D1916]">Menú de servicios</h3>
+          <p class="text-sm text-[#8B7670]">
+            Crea categorías y servicios. Esta información aparecerá en la vista del cliente.
+          </p>
+        </div>
+
+        <div class="flex gap-3">
+          <button
+            type="button"
+            class="h-9 px-4 rounded-full border border-[#E8DDD6] text-sm font-semibold">
+            Opciones
+          </button>
+
+          <button
+            type="button"
+            (click)="abrirModalServicio()"
+            class="h-9 px-5 rounded-full bg-[#111111] text-white text-sm font-semibold">
+            Añadir servicio
+          </button>
+        </div>
+      </div>
+
+      <!-- BÚSQUEDA -->
+      <div class="h-[56px] rounded-2xl border border-[#E8DDD6] px-4 flex items-center justify-between mb-5">
+        <div class="flex items-center gap-3 w-full max-w-[340px]">
+          <span class="text-[#9B8780]">🔎</span>
+          <input
+            type="text"
+            [(ngModel)]="busqueda"
+            placeholder="Buscar nombre de servicio"
+            class="w-full outline-none text-sm bg-transparent">
+        </div>
+
+        <button class="h-8 px-4 rounded-full border border-[#E8DDD6] text-sm font-semibold">
+          Filtros
+        </button>
+      </div>
+
+      <div class="grid lg:grid-cols-[280px_1fr] gap-6">
+
+        <!-- CATEGORÍAS -->
+        <aside class="rounded-3xl border border-[#E8DDD6] p-4 h-fit">
+          <h4 class="text-lg font-bold text-[#1D1916] mb-4">Categorías</h4>
+
+          <button
+            type="button"
+            (click)="categoriaSeleccionada = 'todas'"
+            class="w-full h-10 px-3 rounded-xl text-sm flex items-center justify-between mb-2"
+            [class.bg-[#F1E7DF]]="categoriaSeleccionada === 'todas'">
+            <span>Todas las categorías</span>
+            <span class="text-xs bg-white border border-[#E8DDD6] rounded-full px-2">
+              {{ totalServicios() }}
+            </span>
+          </button>
+
+          <button
+            *ngFor="let categoria of categorias"
+            type="button"
+            (click)="categoriaSeleccionada = categoria.id"
+            class="w-full h-10 px-3 rounded-xl text-sm flex items-center justify-between mb-2"
+            [class.bg-[#F1E7DF]]="categoriaSeleccionada === categoria.id">
+            <span>{{ categoria.nombre }}</span>
+            <span class="text-xs bg-white border border-[#E8DDD6] rounded-full px-2">
+              {{ categoria.servicios.length }}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            (click)="abrirModalCategoria()"
+            class="mt-3 text-sm font-semibold text-[#8E6EDB]">
+            Añadir categoría
+          </button>
+        </aside>
+
+        <!-- LISTA DE SERVICIOS -->
+        <div class="space-y-6">
+
+          <div *ngFor="let categoria of categoriasParaMostrar()">
+
+            <div class="flex items-center justify-between mb-3">
+              <div>
+                <h4 class="text-xl font-bold text-[#1D1916]">
+                  {{ categoria.nombre }}
+                </h4>
+                <p class="text-sm text-[#8B7670]">
+                  {{ categoria.descripcion || 'Sin descripción' }}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                class="h-8 px-4 rounded-full border border-[#E8DDD6] text-sm font-semibold">
+                Acciones
+              </button>
+            </div>
+
+            <div class="space-y-3">
+              <div
+                *ngFor="let servicio of serviciosFiltrados(categoria)"
+                class="rounded-2xl border border-[#E8DDD6] bg-white p-4 flex items-center justify-between"
+                [style.border-left]="'6px solid ' + categoria.color">
+
+                <div>
+                  <p class="font-semibold text-[#1D1916]">
+                    {{ servicio.nombre }}
+                  </p>
+
+                  <p class="text-sm text-[#8B7670]">
+                    {{ servicio.duracion }}
+                  </p>
+
+                  <p class="text-sm text-[#8B7670]" *ngIf="servicio.descripcion">
+                    {{ servicio.descripcion }}
+                  </p>
+                </div>
+
+                <div class="flex items-center gap-5">
+                  <p class="font-bold text-sm text-[#1D1916]">
+                    {{ servicio.precio }} PEN
+                  </p>
+
+                  <button class="text-xl leading-none">
+                    ⋮
+                  </button>
+                </div>
+
+              </div>
+
+              <p
+                *ngIf="serviciosFiltrados(categoria).length === 0"
+                class="text-sm text-[#8B7670] py-4">
+                No hay servicios en esta categoría.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TRABAJADORES Y SOBRE NOSOTROS -->
+    <div class="grid lg:grid-cols-2 gap-5 mb-5">
+
+      <!-- TRABAJADORES -->
+      <section class="bg-white rounded-3xl border border-[#E8DDD6] p-5">
+        <h3 class="text-xl font-bold text-[#1D1916]">Trabajadores</h3>
+        <p class="text-sm text-[#8B7670] mt-1">
+          Registra al personal que aparecerá en la vista del cliente.
+        </p>
+
+        <div class="mt-5 grid sm:grid-cols-2 gap-3">
+          <input
+            type="text"
+            [(ngModel)]="nombreTrabajador"
+            placeholder="Nombre"
+            class="h-10 px-4 rounded-xl border border-[#DDD0C8] text-sm outline-none focus:ring-2 focus:ring-[#C09C75]">
+
+          <input
+            type="text"
+            [(ngModel)]="apellidoTrabajador"
+            placeholder="Apellido"
+            class="h-10 px-4 rounded-xl border border-[#DDD0C8] text-sm outline-none focus:ring-2 focus:ring-[#C09C75]">
+        </div>
+
+        <button
+          type="button"
+          (click)="agregarTrabajador()"
+          class="mt-3 h-9 px-4 rounded-xl bg-[#4A352E] text-white text-sm font-semibold">
+          Agregar trabajador
+        </button>
+
+        <div class="mt-5 space-y-2">
+          <div
+            *ngFor="let trabajador of trabajadores"
+            class="h-11 px-4 rounded-xl bg-[#F7F4F0] flex items-center justify-between">
+            <p class="text-sm font-semibold">
+              {{ trabajador.nombre }} {{ trabajador.apellido }}
+            </p>
+            <span class="text-xs text-[#8B7670]">Activo</span>
+          </div>
+
+          <p *ngIf="trabajadores.length === 0" class="text-sm text-[#8B7670]">
+            Aún no registraste trabajadores.
+          </p>
+        </div>
+      </section>
+
+      <!-- SOBRE NOSOTROS -->
+      <section class="bg-white rounded-3xl border border-[#E8DDD6] p-5">
+        <h3 class="text-xl font-bold text-[#1D1916]">Sobre nosotros</h3>
+        <p class="text-sm text-[#8B7670] mt-1">
+          Este texto se mostrará en la vista del cliente cuando entre a tu negocio.
+        </p>
+
+        <textarea
+          [(ngModel)]="sobreNosotros"
+          rows="8"
+          maxlength="500"
+          placeholder="Ej. Somos una peluquería especializada en cortes modernos, coloración, peinados y cuidado capilar..."
+          class="mt-5 w-full px-4 py-3 rounded-2xl border border-[#DDD0C8] text-sm outline-none resize-none focus:ring-2 focus:ring-[#C09C75]">
+        </textarea>
+
+        <div class="text-right text-xs text-[#8B7670] mt-2">
+          {{ sobreNosotros.length }}/500
+        </div>
+      </section>
+
+    </div>
+
+  </div>
+
+</main>
+
+<!-- MODAL AÑADIR CATEGORÍA -->
+<div
+  *ngIf="mostrarModalCategoria"
+  class="fixed inset-0 bg-black/30 flex items-center justify-center px-6 z-50">
+
+  <div class="w-full max-w-[520px] bg-white rounded-3xl p-7 shadow-xl">
+
+    <div class="flex items-start justify-between mb-6">
+      <h3 class="text-xl font-bold text-[#1D1916]">Añadir categoría</h3>
+
+      <button
+        type="button"
+        (click)="cerrarModalCategoria()"
+        class="text-[#8B7670]">
+        ✕
+      </button>
+    </div>
+
+    <div class="grid sm:grid-cols-2 gap-4">
+      <div>
+        <label class="block text-sm font-semibold mb-2">Nombre de la categoría</label>
+        <input
+          type="text"
+          [(ngModel)]="nuevaCategoria.nombre"
+          placeholder="Por ejemplo, peluquería"
+          class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] text-sm outline-none focus:ring-2 focus:ring-[#C09C75]">
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-2">Color de la cita</label>
+        <select
+          [(ngModel)]="nuevaCategoria.color"
+          class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] text-sm outline-none focus:ring-2 focus:ring-[#C09C75]">
+          <option
+            *ngFor="let color of coloresCategoria"
+            [value]="color.valor">
+            {{ color.nombre }}
+          </option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-4">
+      <label class="block text-sm font-semibold mb-2">Descripción</label>
+      <textarea
+        [(ngModel)]="nuevaCategoria.descripcion"
+        rows="4"
+        maxlength="255"
+        class="w-full px-4 py-3 rounded-xl border border-[#DDD0C8] text-sm outline-none resize-none focus:ring-2 focus:ring-[#C09C75]">
+      </textarea>
+
+      <p class="text-right text-xs text-[#8B7670]">
+        {{ nuevaCategoria.descripcion.length }}/255
+      </p>
+    </div>
+
+    <div class="mt-6 flex justify-end gap-3">
+      <button
+        type="button"
+        (click)="cerrarModalCategoria()"
+        class="h-10 px-5 rounded-full border border-[#E8DDD6] text-sm font-semibold">
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        (click)="agregarCategoria()"
+        class="h-10 px-5 rounded-full bg-[#111111] text-white text-sm font-semibold">
+        Añadir
+      </button>
+    </div>
+
+  </div>
+
+</div>
+
+<!-- MODAL AÑADIR SERVICIO -->
+<div
+  *ngIf="mostrarModalServicio"
+  class="fixed inset-0 bg-black/30 flex items-center justify-center px-6 z-50">
+
+  <div class="w-full max-w-[760px] bg-white rounded-3xl p-7 shadow-xl max-h-[90vh] overflow-auto">
+
+    <div class="flex items-start justify-between mb-6">
+      <div>
+        <h3 class="text-xl font-bold text-[#1D1916]">Añadir servicio</h3>
+        <p class="text-sm text-[#8B7670] mt-1">
+          Completa la información que verá el cliente.
+        </p>
+      </div>
+
+      <button
+        type="button"
+        (click)="cerrarModalServicio()"
+        class="text-[#8B7670]">
+        ✕
+      </button>
+    </div>
+
+    <!-- INFORMACIÓN BÁSICA -->
+    <h4 class="text-lg font-bold text-[#1D1916] mb-4">Información básica</h4>
+
+    <div class="space-y-4">
+
+      <div>
+        <label class="block text-sm font-semibold mb-2">Nombre del servicio</label>
+        <input
+          type="text"
+          [(ngModel)]="nuevoServicio.nombre"
+          placeholder="Ej. Corte de pelo"
+          class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] text-sm outline-none focus:ring-2 focus:ring-[#C09C75]">
+      </div>
+
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div>
+          <label class="block text-sm font-semibold mb-2">Categoría</label>
+          <select
+            [(ngModel)]="nuevoServicio.categoriaId"
+            class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] text-sm outline-none focus:ring-2 focus:ring-[#C09C75]">
+            <option
+              *ngFor="let categoria of categorias"
+              [value]="categoria.id">
+              {{ categoria.nombre }}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2">Tipo de tratamiento</label>
+          <select
+            [(ngModel)]="nuevoServicio.tipoTratamiento"
+            class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] text-sm outline-none focus:ring-2 focus:ring-[#C09C75]">
+            <option value="">Seleccionar tipo</option>
+            <option>Cabello</option>
+            <option>Coloración</option>
+            <option>Peinado</option>
+            <option>Cejas</option>
+            <option>Manicure</option>
+            <option>Maquillaje</option>
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-2">Descripción</label>
+        <textarea
+          [(ngModel)]="nuevoServicio.descripcion"
+          rows="4"
+          maxlength="1000"
+          placeholder="Añade una breve descripción del servicio"
+          class="w-full px-4 py-3 rounded-xl border border-[#DDD0C8] text-sm outline-none resize-none focus:ring-2 focus:ring-[#C09C75]">
+        </textarea>
+
+        <p class="text-right text-xs text-[#8B7670]">
+          {{ nuevoServicio.descripcion.length }}/1000
+        </p>
+      </div>
+
+    </div>
+
+    <!-- PRECIO Y DURACIÓN -->
+    <h4 class="text-lg font-bold text-[#1D1916] mt-7 mb-4">Precios y duración</h4>
+
+    <div class="grid sm:grid-cols-3 gap-4">
+      <div>
+        <label class="block text-sm font-semibold mb-2">Tipo de precio</label>
+        <select
+          [(ngModel)]="nuevoServicio.tipoPrecio"
+          class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] text-sm outline-none focus:ring-2 focus:ring-[#C09C75]">
+          <option>Fijo</option>
+          <option>Desde</option>
+          <option>Variable</option>
+        </select>
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-2">Precio</label>
+        <input
+          type="number"
+          [(ngModel)]="nuevoServicio.precio"
+          placeholder="PEN 0.00"
+          class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] text-sm outline-none focus:ring-2 focus:ring-[#C09C75]">
+      </div>
+
+      <div>
+        <label class="block text-sm font-semibold mb-2">Duración</label>
+        <select
+          [(ngModel)]="nuevoServicio.duracion"
+          class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] text-sm outline-none focus:ring-2 focus:ring-[#C09C75]">
+          <option>30 min</option>
+          <option>45 min</option>
+          <option>1 h</option>
+          <option>1 h y 15 min</option>
+          <option>1 h y 30 min</option>
+          <option>2 h</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="mt-7 flex justify-end gap-3">
+      <button
+        type="button"
+        (click)="cerrarModalServicio()"
+        class="h-10 px-5 rounded-full border border-[#E8DDD6] text-sm font-semibold">
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        (click)="agregarServicio()"
+        class="h-10 px-5 rounded-full bg-[#111111] text-white text-sm font-semibold">
+        Añadir servicio
+      </button>
+    </div>
+
+  </div>
+
+</div>

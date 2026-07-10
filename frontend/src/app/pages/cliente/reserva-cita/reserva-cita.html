@@ -1,0 +1,278 @@
+<section class="min-h-screen bg-[#F6F6F6] text-black px-5 py-5">
+
+  <div class="max-w-[1120px] mx-auto">
+
+    <!-- SUPERIOR -->
+    <div class="flex items-center justify-between mb-6">
+      <button
+        type="button"
+        (click)="volver()"
+        class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-xl">
+        ←
+      </button>
+
+      <button
+        type="button"
+        (click)="cerrar()"
+        class="w-10 h-10 rounded-full bg-white border border-neutral-200 flex items-center justify-center text-xl">
+        ×
+      </button>
+    </div>
+
+    <div class="grid lg:grid-cols-[1fr_340px] gap-6 items-start">
+
+      <!-- IZQUIERDA -->
+      <div>
+        <p *ngIf="error" class="mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+          {{ error }}
+        </p>
+
+        <!-- PASOS -->
+        <div class="flex items-center gap-2 text-xs mb-3">
+          <span [class.font-bold]="paso === 1">Servicios</span>
+          <span>›</span>
+          <span [class.font-bold]="paso === 2" [class.text-neutral-400]="paso < 2">Profesional</span>
+          <span>›</span>
+          <span [class.font-bold]="paso === 3" [class.text-neutral-400]="paso < 3">Hora</span>
+          <span>›</span>
+          <span [class.font-bold]="paso === 4" [class.text-neutral-400]="paso < 4">Confirmar</span>
+        </div>
+
+        <!-- PASO 1 -->
+        <div *ngIf="paso === 1">
+          <h1 class="text-[30px] font-bold mb-5">Seleccionar servicios</h1>
+
+          <div class="space-y-3">
+            <button
+              *ngFor="let servicio of servicios"
+              type="button"
+              (click)="seleccionarServicio(servicio)"
+              class="w-full bg-white rounded-2xl border p-5 text-left flex items-center justify-between transition"
+              [class.border-black]="servicioSeleccionado?.id === servicio.id"
+              [class.border-neutral-200]="servicioSeleccionado?.id !== servicio.id">
+
+              <div>
+                <p class="font-semibold">{{ servicio.nombre }}</p>
+                <p class="text-sm text-neutral-500 mt-1">{{ servicio.duracion }}</p>
+                <p *ngIf="servicio.descripcion" class="text-sm text-neutral-500 mt-2 line-clamp-2">
+                  {{ servicio.descripcion }}
+                </p>
+                <p class="font-bold text-sm mt-4">S/ {{ servicio.precio }}</p>
+              </div>
+
+              <div
+                class="w-8 h-8 rounded-full border border-neutral-300 flex items-center justify-center shrink-0"
+                [class.bg-black]="servicioSeleccionado?.id === servicio.id"
+                [class.text-white]="servicioSeleccionado?.id === servicio.id">
+                {{ servicioSeleccionado?.id === servicio.id ? '✓' : '+' }}
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- PASO 2 -->
+        <div *ngIf="paso === 2">
+          <h1 class="text-[30px] font-bold mb-5">Seleccionar profesional</h1>
+
+          <div class="space-y-3">
+
+            <button
+              type="button"
+              (click)="seleccionarSinPreferencia()"
+              class="w-full bg-white rounded-2xl border p-5 text-left flex items-center justify-between"
+              [class.border-black]="sinPreferencia"
+              [class.border-neutral-200]="!sinPreferencia">
+
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-full bg-black text-white flex items-center justify-center">
+                  ↔
+                </div>
+
+                <div>
+                  <p class="font-semibold">Sin preferencia</p>
+                  <p class="text-sm text-neutral-500">Máxima disponibilidad</p>
+                </div>
+              </div>
+
+              <span class="text-sm font-semibold">
+                {{ sinPreferencia ? '✓' : 'Seleccionar' }}
+              </span>
+            </button>
+
+            <button
+              *ngFor="let trabajador of trabajadores"
+              type="button"
+              (click)="seleccionarTrabajador(trabajador)"
+              class="w-full bg-white rounded-2xl border p-5 text-left flex items-center justify-between"
+              [class.border-black]="trabajadorSeleccionado === trabajador"
+              [class.border-neutral-200]="trabajadorSeleccionado !== trabajador">
+
+              <div class="flex items-center gap-4">
+                <div class="w-14 h-14 rounded-full bg-neutral-100 border border-neutral-200 flex items-center justify-center font-bold">
+                  {{ trabajador.nombre.charAt(0) }}{{ trabajador.apellido.charAt(0) }}
+                </div>
+
+                <div>
+                  <p class="font-semibold">{{ trabajador.nombre }} {{ trabajador.apellido }}</p>
+                  <p class="text-sm text-neutral-500">Profesional del negocio</p>
+                </div>
+              </div>
+
+              <span class="text-sm font-semibold">
+                {{ trabajadorSeleccionado === trabajador ? '✓' : 'Seleccionar' }}
+              </span>
+            </button>
+
+          </div>
+        </div>
+
+        <!-- PASO 3 -->
+        <div *ngIf="paso === 3">
+          <h1 class="text-[30px] font-bold mb-5">Seleccionar fecha y hora</h1>
+
+          <h2 class="font-bold mb-3">Selecciona una fecha</h2>
+
+          <div class="flex gap-3 mb-6 overflow-x-auto pb-1">
+            <button
+              *ngFor="let fecha of fechas"
+              type="button"
+              (click)="seleccionarFecha(fecha)"
+              class="w-[72px] h-[82px] rounded-2xl border bg-white flex flex-col items-center justify-center shrink-0"
+              [class.bg-black]="fechaSeleccionada === fecha.valor"
+              [class.text-white]="fechaSeleccionada === fecha.valor">
+              <span class="text-xs">{{ fecha.dia }}</span>
+              <span class="text-2xl font-bold">{{ fecha.numero }}</span>
+              <span class="text-xs">{{ fecha.mes }}</span>
+            </button>
+          </div>
+
+          <h2 class="font-bold mb-3">Escoge una hora</h2>
+
+          <div class="space-y-3">
+            <button
+              *ngFor="let hora of horas"
+              type="button"
+              (click)="seleccionarHora(hora)"
+              class="w-full h-12 rounded-2xl border bg-white text-left px-5 font-medium"
+              [class.border-black]="horaSeleccionada === hora"
+              [class.border-neutral-200]="horaSeleccionada !== hora">
+              {{ hora }}
+            </button>
+          </div>
+        </div>
+
+        <!-- PASO 4 -->
+        <div *ngIf="paso === 4">
+          <h1 class="text-[30px] font-bold mb-5">Confirmar cita</h1>
+
+          <div class="bg-white rounded-3xl border border-neutral-200 overflow-hidden">
+
+            <div class="p-6 border-b border-neutral-200">
+              <p class="text-xs tracking-[3px] uppercase text-neutral-400">Confirmación</p>
+              <h2 class="text-3xl font-bold mt-1">#{{ 100000 + (servicioSeleccionado?.id || 0) }}</h2>
+            </div>
+
+            <div class="p-6 space-y-6">
+
+              <div>
+                <h3 class="text-lg font-bold border-b border-black pb-2 mb-3">Información de la cita</h3>
+
+                <div class="grid sm:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <p class="text-xs text-neutral-400">Fecha</p>
+                    <p class="font-semibold">{{ fechaSeleccionadaTexto }}</p>
+                  </div>
+
+                  <div>
+                    <p class="text-xs text-neutral-400">Hora</p>
+                    <p class="font-semibold">{{ horaSeleccionada }}</p>
+                  </div>
+
+                  <div>
+                    <p class="text-xs text-neutral-400">Ubicación</p>
+                    <p class="font-semibold">{{ direccion }}, {{ distrito }}</p>
+                  </div>
+
+                  <div>
+                    <p class="text-xs text-neutral-400">Profesional</p>
+                    <p class="font-semibold">{{ nombreTrabajador() }}</p>
+                  </div>
+
+                  <div>
+                    <p class="text-xs text-neutral-400">Servicio</p>
+                    <p class="font-semibold">{{ servicioSeleccionado?.nombre }}</p>
+                  </div>
+
+                  <div>
+                    <p class="text-xs text-neutral-400">Precio</p>
+                    <p class="font-semibold">S/ {{ servicioSeleccionado?.precio }}</p>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                (click)="confirmarCita()"
+                [disabled]="guardando"
+                class="w-full h-11 rounded-full bg-black text-white text-sm font-semibold disabled:bg-neutral-300 disabled:cursor-not-allowed">
+                Confirmar cita
+              </button>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- RESUMEN DERECHA -->
+      <aside class="bg-white rounded-3xl border border-neutral-200 p-5 lg:sticky lg:top-5">
+
+        <div class="flex gap-3 pb-4 border-b border-neutral-200">
+          <div class="w-14 h-14 rounded-xl overflow-hidden bg-neutral-100 shrink-0">
+            <img *ngIf="portada" [src]="portada" class="w-full h-full object-cover">
+          </div>
+
+          <div>
+            <h3 class="font-bold leading-tight">{{ nombreNegocio }}</h3>
+            <p class="text-xs text-neutral-500 mt-1 line-clamp-2">
+              {{ direccion }}, {{ distrito }}
+            </p>
+          </div>
+        </div>
+
+        <div class="py-4 border-b border-neutral-200 text-sm space-y-3">
+          <div class="flex justify-between gap-4">
+            <span>{{ servicioSeleccionado?.nombre || 'Servicio pendiente' }}</span>
+            <span class="font-semibold">
+              {{ servicioSeleccionado ? 'S/ ' + servicioSeleccionado.precio : '-' }}
+            </span>
+          </div>
+
+          <p class="text-neutral-500">
+            {{ servicioSeleccionado?.duracion || 'Duración pendiente' }}
+            <span *ngIf="paso >= 2"> con {{ nombreTrabajador() }}</span>
+          </p>
+
+          <p *ngIf="horaSeleccionada" class="text-neutral-500">
+            {{ fechaSeleccionadaTexto }} a las {{ horaSeleccionada }}
+          </p>
+        </div>
+
+        <div class="py-4 flex justify-between font-bold">
+          <span>Total</span>
+          <span>{{ servicioSeleccionado ? 'S/ ' + servicioSeleccionado.precio : '-' }}</span>
+        </div>
+
+        <button
+          type="button"
+          (click)="continuar()"
+          [disabled]="!puedeContinuar()"
+          class="w-full h-11 rounded-full bg-black text-white text-sm font-semibold disabled:bg-neutral-300 disabled:cursor-not-allowed">
+          {{ paso === 4 ? (guardando ? 'Guardando...' : 'Confirmar') : 'Continuar' }} →
+        </button>
+
+      </aside>
+
+    </div>
+  </div>
+</section>

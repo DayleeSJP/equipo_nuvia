@@ -1,0 +1,170 @@
+<main class="p-4">
+  <div class="w-full max-w-[1100px] mx-auto mb-4 flex items-center justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-bold text-[#1D1916]">Calendario</h2>
+      <p class="text-xs text-[#8B7670]">Reservas de clientes y reservas manuales guardadas en MySQL</p>
+    </div>
+
+    <button type="button" (click)="abrirModal()"
+            class="h-9 px-5 rounded-full bg-[#4A352E] text-white text-xs font-semibold">
+      Añadir reserva
+    </button>
+  </div>
+
+  <p *ngIf="error" class="w-full max-w-[1100px] mx-auto mb-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+    {{ error }}
+  </p>
+
+  <div class="w-full max-w-[1100px] mx-auto bg-white rounded-2xl border border-[#E8DDD6] overflow-x-auto">
+    <div class="min-w-[900px]">
+      <div class="h-[48px] px-4 flex items-center justify-between border-b border-[#E8DDD6]">
+        <div class="flex items-center gap-2">
+          <button type="button" (click)="irHoy()" class="h-8 px-3 rounded-full border border-[#E8DDD6] text-xs">Hoy</button>
+          <button type="button" (click)="moverSemana(-7)" class="w-8 h-8 rounded-full border border-[#E8DDD6] text-sm">‹</button>
+          <button type="button" (click)="moverSemana(7)" class="w-8 h-8 rounded-full border border-[#E8DDD6] text-sm">›</button>
+          <p class="text-xs font-semibold text-[#1D1916]">{{ tituloSemana }}</p>
+        </div>
+        <span class="h-8 px-3 rounded-full border border-[#E8DDD6] text-xs inline-flex items-center">Semana</span>
+      </div>
+
+      <div class="grid grid-cols-[60px_repeat(7,minmax(110px,1fr))] border-b border-[#E8DDD6]">
+        <div class="h-10"></div>
+        <div *ngFor="let dia of dias"
+             class="h-10 flex items-center justify-center text-xs font-semibold border-l border-[#E8DDD6]">
+          {{ dia }}
+        </div>
+      </div>
+
+      <div class="relative">
+        <div *ngFor="let hora of horas"
+             class="grid grid-cols-[60px_repeat(7,minmax(110px,1fr))] min-h-[48px] border-b border-[#EFE7E1]">
+          <div class="text-[11px] text-[#8B7670] flex justify-center pt-2">{{ hora }}</div>
+          <div *ngFor="let dia of dias" class="border-l border-[#EFE7E1] bg-[#FCFAF8]"></div>
+        </div>
+
+        <div *ngFor="let reserva of reservas"
+             (click)="abrirDetalle(reserva, $event)"
+             class="absolute rounded-lg bg-[#D8EEF8] border border-[#B9DDED] p-2 text-[11px] shadow-sm overflow-hidden cursor-pointer hover:ring-2 hover:ring-[#C09C75]/40 transition"
+             [style.left]="leftReserva(reserva)"
+             [style.top.px]="topReserva(reserva)"
+             [style.height.px]="altoReserva(reserva)"
+             [style.width]="anchoReserva()">
+          <p class="font-bold text-[#1D1916] leading-tight">{{ reserva.inicio }} - {{ reserva.fin }}</p>
+          <p class="font-semibold truncate leading-tight">{{ reserva.cliente }}</p>
+          <p class="text-[#5A6B73] truncate leading-tight">{{ reserva.servicio }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="mostrarModal" class="fixed inset-0 bg-black/30 flex items-center justify-center px-6 z-50">
+    <div class="w-full max-w-md bg-white rounded-3xl p-7 shadow-xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-start justify-between mb-6">
+        <div>
+          <h2 class="text-xl font-bold text-[#1D1916]">Añadir reserva</h2>
+          <p class="text-sm text-[#8B7670] mt-1">Selecciona un cliente registrado y un servicio de este negocio.</p>
+        </div>
+        <button type="button" (click)="cerrarModal()" class="text-[#8B7670]">✕</button>
+      </div>
+
+      <form (ngSubmit)="guardarReserva()" class="space-y-4">
+        <div>
+          <label class="block text-sm font-semibold mb-2">Cliente</label>
+          <select name="clienteId" [(ngModel)]="nuevaReserva.clienteId"
+                  class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]">
+            <option [ngValue]="null">Selecciona un cliente</option>
+            <option *ngFor="let cliente of clientes" [ngValue]="cliente.id">
+              {{ cliente.nombre }} {{ cliente.apellido }} · {{ cliente.email }}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2">Servicio</label>
+          <select name="servicioId" [(ngModel)]="nuevaReserva.servicioId"
+                  class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]">
+            <option [ngValue]="null">Selecciona un servicio</option>
+            <option *ngFor="let servicio of servicios" [ngValue]="servicio.id">
+              {{ servicio.nombre }} · S/ {{ servicio.precio }}
+            </option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-semibold mb-2">Profesional</label>
+          <select name="trabajadorId" [(ngModel)]="nuevaReserva.trabajadorId"
+                  class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]">
+            <option [ngValue]="null">Sin preferencia</option>
+            <option *ngFor="let trabajador of trabajadores" [ngValue]="trabajador.id">
+              {{ trabajador.nombre }} {{ trabajador.apellido }}
+            </option>
+          </select>
+        </div>
+
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-semibold mb-2">Fecha</label>
+            <input type="date" name="fecha" [(ngModel)]="nuevaReserva.fecha"
+                   class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]">
+          </div>
+          <div>
+            <label class="block text-sm font-semibold mb-2">Hora</label>
+            <input type="time" name="inicio" [(ngModel)]="nuevaReserva.inicio"
+                   class="w-full h-11 px-4 rounded-xl border border-[#DDD0C8] outline-none focus:ring-2 focus:ring-[#C09C75]">
+          </div>
+        </div>
+
+        <button type="submit" [disabled]="guardando"
+                class="w-full h-11 rounded-xl bg-[#C09C75] text-white font-semibold disabled:opacity-60">
+          {{ guardando ? 'Guardando...' : 'Guardar reserva' }}
+        </button>
+      </form>
+    </div>
+  </div>
+</main>
+
+<div *ngIf="reservaSeleccionada"
+     class="fixed z-50 w-[280px] bg-white rounded-2xl border border-[#E8DDD6] shadow-xl p-4"
+     [style.left.px]="detalleX"
+     [style.top.px]="detalleY">
+  <div class="flex items-start justify-between gap-3 mb-3">
+    <div>
+      <p class="text-[10px] tracking-[3px] uppercase text-[#C09C75] font-bold">Reserva</p>
+      <h3 class="text-base font-bold text-[#1D1916] mt-1">{{ reservaSeleccionada.cliente }}</h3>
+    </div>
+    <button type="button" (click)="cerrarDetalle()" class="text-[#8B7670] text-sm">✕</button>
+  </div>
+
+  <div class="space-y-2 text-sm text-[#6F5D57]">
+    <div>
+      <p class="text-xs text-[#9B8780]">Servicio</p>
+      <p class="font-semibold text-[#1D1916]">{{ reservaSeleccionada.servicio }}</p>
+    </div>
+    <div>
+      <p class="text-xs text-[#9B8780]">Profesional</p>
+      <p class="font-semibold text-[#1D1916]">{{ reservaSeleccionada.trabajador }}</p>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+      <div>
+        <p class="text-xs text-[#9B8780]">Inicio</p>
+        <p class="font-semibold text-[#1D1916]">{{ reservaSeleccionada.inicio }}</p>
+      </div>
+      <div>
+        <p class="text-xs text-[#9B8780]">Fin</p>
+        <p class="font-semibold text-[#1D1916]">{{ reservaSeleccionada.fin }}</p>
+      </div>
+    </div>
+    <span class="inline-flex mt-1 px-3 py-1 rounded-full bg-[#F1E7DF] text-[#4A352E] text-xs font-semibold">
+      {{ reservaSeleccionada.estado }}
+    </span>
+
+    <div class="flex flex-wrap gap-3 pt-2 text-xs font-semibold">
+      <button *ngIf="reservaSeleccionada.estado !== 'Completada' && reservaSeleccionada.estado !== 'Cancelada'"
+              type="button" (click)="cambiarEstado(reservaSeleccionada, 'Completada')"
+              class="text-emerald-600">Completar</button>
+      <button *ngIf="reservaSeleccionada.estado !== 'Cancelada' && reservaSeleccionada.estado !== 'Completada'"
+              type="button" (click)="cambiarEstado(reservaSeleccionada, 'Cancelada')"
+              class="text-rose-500">Cancelar</button>
+    </div>
+  </div>
+</div>

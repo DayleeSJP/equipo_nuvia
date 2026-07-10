@@ -1,0 +1,279 @@
+<section class="min-h-screen bg-[#FAF7F2] text-[#1A1A1A] font-[Poppins]">
+  <div *ngIf="error" class="max-w-[1120px] mx-auto px-5 pt-5">
+    <p class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ error }}</p>
+  </div>
+
+
+  <!-- HEADER SUPERIOR -->
+  <header class="h-[72px] border-b border-[#EDE2D3] bg-[#FAF7F2]/95 backdrop-blur sticky top-0 z-30 shadow-[0_1px_0_rgba(0,0,0,0.03)]">
+    <div class="max-w-[1100px] mx-auto h-full px-5 flex items-center justify-between">
+
+      <div class="flex items-center gap-4">
+        <a routerLink="/"
+          class="w-9 h-9 rounded-full border border-[#E4D5BE] flex items-center justify-center text-lg text-[#8A6A44] hover:bg-[#F3E8D8] transition">
+          ←
+        </a>
+
+        <a routerLink="/" class="text-2xl font-bold tracking-tight text-[#1A1A1A]">
+          Nuvia
+        </a>
+      </div>
+
+      <div class="w-10 h-10 rounded-full bg-[#C09C75] text-white flex items-center justify-center font-bold ring-2 ring-[#EBD9BE] ring-offset-2 ring-offset-[#FAF7F2]">
+        D
+      </div>
+
+    </div>
+  </header>
+
+  <div class="max-w-[1100px] mx-auto px-5 md:px-0 pt-8">
+
+    <!-- IMAGEN + CABECERA SUPERPUESTA -->
+    <div class="mb-6">
+      <div class="relative w-full h-[280px] md:h-[360px] rounded-[28px] overflow-hidden border border-[#EDE2D3] bg-[#F3E8D8] shadow-sm">
+
+        <img *ngIf="portada" [src]="portada" alt="Portada del negocio" class="w-full h-full object-cover" />
+
+        <div *ngIf="!portada" class="w-full h-full flex items-center justify-center text-sm text-[#9C8365]">
+          Imagen de portada no disponible
+        </div>
+
+        <!-- Degradado + texto flotante -->
+        <div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent pointer-events-none"></div>
+
+        <div class="absolute bottom-0 left-0 right-0 p-6 md:p-8">
+          <h1 class="text-[26px] md:text-[36px] font-bold leading-tight text-white drop-shadow-sm">
+            {{ nombreNegocio }}
+          </h1>
+
+          <p class="mt-1 text-sm text-white/85">
+            {{ direccion }}, {{ distrito }}, Lima, Perú
+          </p>
+        </div>
+
+      </div>
+
+      <!-- BARRA DE MINI-STATS -->
+      <div class="mt-4 flex flex-wrap gap-3">
+        <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#EDE2D3] text-sm">
+          <span class="text-[#C09C75]">✦</span>
+          <span class="font-medium">{{ totalServicios() }}</span>
+          <span class="text-[#8A6A44]">servicios</span>
+        </div>
+
+        <div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#EDE2D3] text-sm">
+          <span class="text-[#C09C75]">✦</span>
+          <span class="font-medium">{{ trabajadores.length }}</span>
+          <span class="text-[#8A6A44]">profesionales</span>
+        </div>
+
+        <div *ngIf="distrito" class="flex items-center gap-2 px-4 py-2 rounded-full bg-white border border-[#EDE2D3] text-sm">
+          <span class="text-[#C09C75]">✦</span>
+          <span class="font-medium text-[#8A6A44]">{{ distrito }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
+    <div class="grid lg:grid-cols-[1fr_300px] gap-6 items-start mt-8">
+
+      <!-- IZQUIERDA -->
+      <div>
+
+        <!-- SERVICIOS -->
+        <section class="mb-10">
+          <h2 class="text-2xl font-bold mb-4 text-[#1A1A1A]">Servicios</h2>
+
+          <div *ngIf="categorias.length > 0; else sinServicios">
+            <div *ngFor="let categoria of categorias" class="mb-8">
+              <h3 class="text-lg font-bold text-[#8A6A44] mb-3 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-[#C09C75]"></span>
+                {{ categoria.nombre }}
+              </h3>
+
+              <div class="space-y-3">
+                <div *ngFor="let servicio of categoria.servicios"
+                  class="border border-[#EDE2D3] bg-white rounded-2xl p-4 pl-5 flex items-center justify-between border-l-4 border-l-[#C09C75] hover:shadow-md hover:shadow-[#C09C75]/10 transition">
+
+                  <div>
+                    <h4 class="font-semibold text-[#1A1A1A]">
+                      {{ servicio.nombre }}
+                    </h4>
+
+                    <p class="text-sm text-neutral-500 mt-1">
+                      {{ servicio.descripcion }}
+                    </p>
+
+                    <p class="text-xs text-[#B79567] mt-2 font-medium">
+                      ⏱ {{ servicio.duracion }}
+                    </p>
+                  </div>
+
+                  <div class="text-right shrink-0 ml-4">
+                    <p class="font-bold text-[#1A1A1A]">
+                      S/ {{ servicio.precio }}
+                    </p>
+
+                    <button (click)="reservar(servicio)"
+                      class="mt-2 px-4 py-2 rounded-full bg-[#C09C75] text-white text-sm font-medium hover:bg-[#AD8863] transition">
+                      Reservar
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ng-template #sinServicios>
+            <div class="border border-dashed border-[#E4D5BE] rounded-2xl p-8 text-center">
+              <p class="text-[#9C8365] text-sm">
+                Aún no hay servicios registrados.
+              </p>
+            </div>
+          </ng-template>
+        </section>
+
+        <!-- EQUIPO -->
+        <section class="mb-10">
+          <h2 class="text-2xl font-bold mb-4 text-[#1A1A1A]">Equipo</h2>
+
+          <div *ngIf="trabajadores.length > 0; else sinTrabajadores" class="grid sm:grid-cols-2 gap-3">
+            <div *ngFor="let trabajador of trabajadores"
+              class="border border-[#EDE2D3] bg-white rounded-2xl p-4 flex items-center gap-3 hover:shadow-md hover:shadow-[#C09C75]/10 transition">
+
+              <div class="w-12 h-12 shrink-0 rounded-full bg-[#F3E8D8] text-[#8A6A44] flex items-center justify-center font-bold">
+                {{ trabajador.nombre.charAt(0) }}
+              </div>
+
+              <h4 class="font-semibold text-[#1A1A1A]">
+                {{ trabajador.nombre }} {{ trabajador.apellido }}
+              </h4>
+            </div>
+          </div>
+
+          <ng-template #sinTrabajadores>
+            <div class="border border-dashed border-[#E4D5BE] rounded-2xl p-8 text-center">
+              <p class="text-[#9C8365] text-sm">
+                Aún no hay trabajadores registrados.
+              </p>
+            </div>
+          </ng-template>
+        </section>
+
+        <!-- ACERCA DE -->
+        <section class="mb-8">
+          <h2 class="text-2xl font-bold mb-4 text-[#1A1A1A]">Acerca de</h2>
+
+          <div class="rounded-2xl border border-[#EDE2D3] bg-white p-5">
+            <p class="text-sm leading-7 text-neutral-700">
+              {{ sobreNosotros || 'Aún no hay información sobre este negocio.' }}
+            </p>
+          </div>
+        </section>
+
+      </div>
+
+      <!-- DERECHA -->
+      <aside class="lg:sticky lg:top-[92px]">
+        <div class="rounded-[24px] border border-[#EDE2D3] bg-white p-5 shadow-sm">
+          <h3 class="text-[20px] font-bold leading-tight text-[#1A1A1A]">
+            {{ nombreNegocio }}
+          </h3>
+
+          <p class="mt-1 text-sm text-[#8A6A44]">
+            {{ totalServicios() }} servicios disponibles
+          </p>
+
+          <button type="button" (click)="reservar()"
+            class="mt-5 w-full h-11 rounded-full bg-[#C09C75] text-white text-sm font-semibold hover:bg-[#AD8863] transition">
+            Reservar ahora
+          </button>
+
+          <div class="mt-5 pt-5 border-t border-[#EDE2D3] space-y-4">
+            <div class="flex items-start gap-3">
+              <span class="text-[#C09C75] text-base leading-none mt-0.5">📍</span>
+              <p class="text-sm text-neutral-600">
+                <span class="block font-medium text-[#1A1A1A]">Dirección</span>
+                {{ direccion }} <span *ngIf="distrito">, {{ distrito }}</span>
+              </p>
+            </div>
+
+            <div class="flex items-start gap-3">
+              <span class="text-[#C09C75] text-base leading-none mt-0.5">👥</span>
+              <p class="text-sm text-neutral-600">
+                <span class="block font-medium text-[#1A1A1A]">Equipo</span>
+                {{ trabajadores.length }} trabajador(es)
+              </p>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </div>
+  <!-- FOOTER -->
+    <footer class="bg-[#351B12] text-[#B8A29B] py-10 px-6">
+        <div class="max-w-[1100px] mx-auto">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-white font-semibold text-[18px] mb-3">
+                        Nuvia
+                    </h3>
+
+                    <p class="text-[13px] leading-6 text-[#9E8881] max-w-[220px]">
+                        Reserva citas en peluquerías, barberías y salones de belleza en Lima.
+                    </p>
+                </div>
+
+                <div>
+                    <h4 class="text-[10px] uppercase tracking-[2px] text-white mb-3">
+                        Clientes
+                    </h4>
+
+                    <ul class="space-y-2 text-[13px]">
+                        <li>Buscar salones</li>
+                        <li>Cómo reservar</li>
+                        <li>Preguntas</li>
+                        <li>App móvil</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-[10px] uppercase tracking-[2px] text-white mb-3">
+                        Negocios
+                    </h4>
+
+                    <ul class="space-y-2 text-[13px]">
+                        <li>Registrar negocio</li>
+                        <li>Planes</li>
+                        <li>Centro de ayuda</li>
+                        <li>Partners</li>
+                    </ul>
+                </div>
+
+                <div>
+                    <h4 class="text-[10px] uppercase tracking-[2px] text-white mb-3">
+                        Contacto
+                    </h4>
+
+                    <ul class="space-y-2 text-[13px]">
+                        <li>hola@nuvia.pe</li>
+                        <li>+51 999 888 777</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div
+                class="mt-8 pt-5 border-t border-[#4B2C22] flex flex-col sm:flex-row justify-between items-center text-[12px] text-[#8F7770]">
+                <p>© 2026 Nuvia. Todos los derechos reservados.</p>
+
+                <div class="flex gap-5 mt-3 sm:mt-0">
+                    <a href="#">Términos</a>
+                    <a href="#">Privacidad</a>
+                    <a href="#">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</section>

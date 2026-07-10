@@ -1,0 +1,89 @@
+<section class="min-h-screen bg-[#F9F2EC] flex items-center justify-center px-6 py-10">
+  <div class="w-full max-w-md bg-white rounded-3xl shadow-xl p-8">
+
+    <div class="text-center mb-8">
+      <h1 class="text-4xl font-bold text-[#1D1916]">Nuvia</h1>
+      <p class="text-gray-600 mt-2">Crea tu cuenta de cliente</p>
+    </div>
+
+    <form (ngSubmit)="registrar()" class="space-y-4">
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Nombre</label>
+        <input
+          type="text"
+          name="nombre"
+          [(ngModel)]="nombre"
+          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C09C75]"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Apellido</label>
+        <input
+          type="text"
+          name="apellido"
+          [(ngModel)]="apellido"
+          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C09C75]"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Teléfono</label>
+        <input
+          type="text"
+          name="telefono"
+          [(ngModel)]="telefono"
+          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C09C75]"
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Correo electrónico</label>
+        <input
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C09C75]"
+          required
+        />
+      </div>
+
+      <div>
+        <label class="block text-sm font-medium text-gray-700 mb-2">Contraseña</label>
+        <input
+          type="password"
+          name="password"
+          [(ngModel)]="password"
+          class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#C09C75]"
+          required
+        />
+      </div>
+
+      <p *ngIf="error" class="text-red-500 text-sm">
+        {{ error }}
+      </p>
+
+      <p *ngIf="mensaje" class="text-green-600 text-sm">
+        {{ mensaje }}
+      </p>
+
+      <button
+        type="submit"
+        class="w-full bg-[#C09C75] text-white py-3 rounded-xl font-semibold hover:opacity-90 transition"
+      >
+        Registrarme
+      </button>
+    </form>
+
+    <p class="text-center text-sm text-gray-500 mt-6">
+      ¿Ya tienes cuenta?
+      <a routerLink="/login" class="text-[#C09C75] font-semibold">
+        Inicia sesión
+      </a>
+    </p>
+
+  </div>
+</section>

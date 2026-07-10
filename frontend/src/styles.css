@@ -1,0 +1,35 @@
+/* You can add global styles to this file, and also import other style files */
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: Poppins, sans-serif;
+}
+
+nav a,
+button,
+.menu-item,
+.nav-link {
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+nav a:hover,
+button:hover,
+.menu-item:hover,
+.nav-link:hover {
+  background-color: rgba(246, 194, 62, 0.18);
+  color: #1f1f1f;
+  cursor: pointer;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
