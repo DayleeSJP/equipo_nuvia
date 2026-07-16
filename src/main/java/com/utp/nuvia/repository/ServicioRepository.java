@@ -11,4 +11,6 @@ public interface ServicioRepository extends JpaRepository<Servicio, Integer> {
     List<Servicio> findByPeluqueriaIdOrderByIdAsc(Integer peluqueriaId);
 
     Optional<Servicio> findByIdAndPeluqueriaId(Integer id, Integer peluqueriaId);
+
+    long countByPeluqueriaId(Integer peluqueriaId);
 }

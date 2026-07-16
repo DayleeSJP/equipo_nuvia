@@ -173,6 +173,10 @@
 
                 <div class="relative">
                     <div #c1 class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth cursor-grab">
+                        <p *ngIf="recomendados.length === 0 && !cargandoCatalogo"
+                           class="w-full rounded-2xl border border-dashed border-[#E8DDD6] py-10 text-center text-sm text-[#8B7670]">
+                            Todavía no hay negocios Premium recomendados.
+                        </p>
                         <article *ngFor="let card of recomendados" [routerLink]="['/catalogo/detalle', card.id]"
                             class="min-w-[240px] cursor-pointer">
                             <div class="relative h-[140px] rounded-[10px] overflow-hidden">
@@ -216,14 +220,14 @@
 
                 <div class="relative">
                     <div #c2 class="flex gap-4 overflow-x-auto no-scrollbar scroll-smooth cursor-grab">
+                        <p *ngIf="nuevos.length === 0 && !cargandoCatalogo"
+                           class="w-full rounded-2xl border border-dashed border-[#E8DDD6] py-10 text-center text-sm text-[#8B7670]">
+                            No hay negocios Standard nuevos con esos filtros.
+                        </p>
                         <article *ngFor="let card of nuevos" (click)="verDetalle(card)"
                             class="min-w-[240px] cursor-pointer">
                             <div class="relative h-[140px] rounded-[10px] overflow-hidden">
                                 <img [src]="card.imagen" [alt]="card.nombre" class="w-full h-full object-cover">
-                                <span
-                                    class="absolute top-3 left-3 bg-white text-[10px] font-bold px-3 py-1 rounded-full">
-                                    Destacados
-                                </span>
                                 <button
                                     class="absolute top-3 right-3 bg-white w-[25px] h-[25px] rounded-full text-[#777]">
                                     ♡
@@ -411,10 +415,11 @@
                         <li>✓ Soporte por email</li>
                     </ul>
 
-                    <button
-                        class="mt-7 w-full h-[38px] rounded-[9px] bg-[#F1E7DF] text-[#4A352E] text-[12px] font-semibold">
-                        Comenzar gratis
-                    </button>
+                    <a
+                        [routerLink]="esNegocio() ? '/negocio/planes' : '/registro-negocio'"
+                        class="mt-7 w-full h-[38px] rounded-[9px] bg-[#F1E7DF] text-[#4A352E] text-[12px] font-semibold flex items-center justify-center">
+                        {{ esNegocio() ? 'Ver mi plan' : 'Comenzar gratis' }}
+                    </a>
                 </div>
 
                 <div class="relative bg-[#4A352E] text-white rounded-[18px] p-7 min-h-[390px]">
@@ -452,10 +457,11 @@
                         <li>✓ Integración con redes sociales</li>
                     </ul>
 
-                    <button
-                        class="mt-6 w-full h-[38px] rounded-[9px] bg-[#C09C75] text-white text-[12px] font-semibold">
-                        Activar Premium
-                    </button>
+                    <a
+                        [routerLink]="esNegocio() ? '/negocio/planes' : '/registro-negocio'"
+                        class="mt-6 w-full h-[38px] rounded-[9px] bg-[#C09C75] text-white text-[12px] font-semibold flex items-center justify-center">
+                        {{ esNegocio() ? 'Activar Premium' : 'Registrar negocio' }}
+                    </a>
                 </div>
             </div>
         </div>

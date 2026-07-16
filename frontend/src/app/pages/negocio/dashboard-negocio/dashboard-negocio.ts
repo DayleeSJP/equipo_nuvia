@@ -4,6 +4,8 @@ import { Router, RouterLink } from '@angular/router';
 import { CitaResponse, CitaService } from '../../../services/cita';
 import { AuthService } from '../../../services/auth';
 import { NegocioService } from '../../../services/negocio';
+import { PlanActual, PlanService } from '../../../services/plan';
+
 
 @Component({
   selector: 'app-dashboard-negocio',
@@ -20,11 +22,13 @@ export class DashboardNegocio implements OnInit {
   proximasCitas: CitaResponse[] = [];
   cargando = true;
   error = '';
+  planActual: PlanActual | null = null;
 
   constructor(
     private citaService: CitaService,
     private authService: AuthService,
     private negocioService: NegocioService,
+    private planService: PlanService,
     private router: Router
   ) {}
 
@@ -35,6 +39,8 @@ export class DashboardNegocio implements OnInit {
       this.router.navigate(['/login']);
       return;
     }
+
+    this.cargarPlan(usuario.id);
 
     if (usuario.peluqueriaId) {
       this.peluqueriaId = usuario.peluqueriaId;
@@ -55,6 +61,13 @@ export class DashboardNegocio implements OnInit {
         this.cargando = false;
         this.error = error.error?.mensaje || 'No se encontró el negocio registrado.';
       }
+    });
+  }
+
+  cargarPlan(usuarioId: number): void {
+    this.planService.obtenerPlan(usuarioId).subscribe({
+      next: plan => this.planActual = plan,
+      error: () => this.planActual = null
     });
   }
 

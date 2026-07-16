@@ -27,17 +27,20 @@ public class AuthService {
     private final RolRepository rolRepository;
     private final PeluqueriaRepository peluqueriaRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PlanService planService;
 
     public AuthService(
             UsuarioRepository usuarioRepository,
             RolRepository rolRepository,
             PeluqueriaRepository peluqueriaRepository,
-            PasswordEncoder passwordEncoder
+            PasswordEncoder passwordEncoder,
+            PlanService planService
     ) {
         this.usuarioRepository = usuarioRepository;
         this.rolRepository = rolRepository;
         this.peluqueriaRepository = peluqueriaRepository;
         this.passwordEncoder = passwordEncoder;
+        this.planService = planService;
     }
 
     public LoginResponse login(LoginRequest request) {
@@ -170,7 +173,8 @@ public class AuthService {
             peluqueria.setFechaRegistro(LocalDateTime.now());
         }
 
-        peluqueriaRepository.save(peluqueria);
+        Peluqueria peluqueriaGuardada = peluqueriaRepository.save(peluqueria);
+        planService.asignarStandardSiNoExiste(peluqueriaGuardada);
         return construirRespuesta(usuario, "Negocio registrado correctamente");
     }
 

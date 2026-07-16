@@ -19,5 +19,6 @@ public class CatalogoPeluqueriaResponse {
     private String rating;
     private String imagen;
     private List<String> servicios;
+    private String plan;
 }
 

@@ -51,8 +51,7 @@ export class Home implements OnInit {
     this.catalogoService.listarPeluquerias().subscribe({
       next: (data) => {
         this.catalogoCompleto = data || [];
-        this.recomendados = [...this.catalogoCompleto];
-        this.nuevos = [...this.catalogoCompleto];
+        this.separarCatalogoPorPlan(this.catalogoCompleto);
         this.busquedaRealizada = false;
         this.sinResultados = this.catalogoCompleto.length === 0;
         this.cargandoCatalogo = false;
@@ -90,8 +89,7 @@ export class Home implements OnInit {
       );
     }
 
-    this.recomendados = resultado;
-    this.nuevos = resultado;
+    this.separarCatalogoPorPlan(resultado);
     this.busquedaRealizada = true;
     this.sinResultados = resultado.length === 0;
   }
@@ -108,10 +106,14 @@ export class Home implements OnInit {
     this.ubicacionSeleccionada = '';
     this.servicioSeleccionado = '';
     this.fechaSeleccionada = '';
-    this.recomendados = [...this.catalogoCompleto];
-    this.nuevos = [...this.catalogoCompleto];
+    this.separarCatalogoPorPlan(this.catalogoCompleto);
     this.busquedaRealizada = false;
     this.sinResultados = this.catalogoCompleto.length === 0;
+  }
+
+  private separarCatalogoPorPlan(catalogo: SalonCard[]): void {
+    this.recomendados = catalogo.filter(card => card.plan === 'PREMIUM');
+    this.nuevos = catalogo.filter(card => card.plan !== 'PREMIUM');
   }
 
   toggleMenuPerfil(): void {

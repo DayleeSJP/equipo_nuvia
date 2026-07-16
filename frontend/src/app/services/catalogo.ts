@@ -11,6 +11,7 @@ export interface SalonCard {
   rating: string;
   imagen: string;
   servicios: string[];
+  plan: 'STANDARD' | 'PREMIUM';
 }
 
 export interface ServicioDetalle {

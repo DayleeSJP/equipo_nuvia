@@ -11,6 +11,7 @@ import { PersonalizacionNegocio } from './pages/negocio/personalizacion-negocio/
 import { DetalleNegocio } from './pages/cliente/detalle-negocio/detalle-negocio';
 import { ReservaCita } from './pages/cliente/reserva-cita/reserva-cita';
 import { HistorialReservas } from './pages/cliente/historial-reservas/historial-reservas';
+import { PlanesNegocio } from './pages/negocio/planes-negocio/planes-negocio';
 
 
 
@@ -72,6 +73,10 @@ export const routes: Routes = [
             {
                 path: 'personalizacion',
                 component: PersonalizacionNegocio
+            },
+            {
+                path: 'planes',
+                component: PlanesNegocio
             }
         ]
     }

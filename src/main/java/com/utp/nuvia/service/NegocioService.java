@@ -36,6 +36,7 @@ public class NegocioService {
     private final CategoriaServicioRepository categoriaServicioRepository;
     private final ServicioRepository servicioRepository;
     private final TrabajadorRepository trabajadorRepository;
+    private final PlanService planService;
 
     public NegocioService(
             UsuarioRepository usuarioRepository,
@@ -43,7 +44,8 @@ public class NegocioService {
             CategoriaRepository categoriaRepository,
             CategoriaServicioRepository categoriaServicioRepository,
             ServicioRepository servicioRepository,
-            TrabajadorRepository trabajadorRepository
+            TrabajadorRepository trabajadorRepository,
+            PlanService planService
     ) {
         this.usuarioRepository = usuarioRepository;
         this.peluqueriaRepository = peluqueriaRepository;
@@ -51,9 +53,13 @@ public class NegocioService {
         this.categoriaServicioRepository = categoriaServicioRepository;
         this.servicioRepository = servicioRepository;
         this.trabajadorRepository = trabajadorRepository;
+        this.planService = planService;
     }
 
-
+    /**
+     * Se conserva para compatibilidad con el endpoint existente. El registro
+     * completo de una cuenta de negocio se realiza ahora desde AuthService.
+     */
     @Transactional
     public DetallePeluqueriaResponse registrarNegocio(RegistroNegocioRequest request) {
         if (request.getUsuarioId() == null) {
@@ -81,6 +87,7 @@ public class NegocioService {
         if (peluqueria.getFechaRegistro() == null) peluqueria.setFechaRegistro(LocalDateTime.now());
 
         Peluqueria guardada = peluqueriaRepository.save(peluqueria);
+        planService.asignarStandardSiNoExiste(guardada);
         return obtenerDetalle(guardada.getId());
     }
 
@@ -113,6 +120,8 @@ public class NegocioService {
             peluqueria.setDescripcion(request.getSobreNosotros().trim());
         }
         peluqueriaRepository.save(peluqueria);
+
+        planService.validarNuevosServicios(peluqueria, contarNuevosServicios(request));
 
         if (request.getCategorias() != null) {
             for (PersonalizacionNegocioRequest.CategoriaRequest categoriaRequest : request.getCategorias()) {
@@ -182,7 +191,8 @@ public class NegocioService {
                     "Peluquería · " + servicios.size() + " servicios",
                     "4,8",
                     imagenCatalogo(peluqueria),
-                    nombresServicios
+                    nombresServicios,
+                    planService.nombrePlan(peluqueria.getId())
             ));
         }
 
@@ -390,6 +400,18 @@ public class NegocioService {
         }
 
         return total > 0 ? total : 45;
+    }
+
+    private long contarNuevosServicios(PersonalizacionNegocioRequest request) {
+        if (request.getCategorias() == null) {
+            return 0;
+        }
+
+        return request.getCategorias().stream()
+                .filter(categoria -> categoria.getServicios() != null)
+                .flatMap(categoria -> categoria.getServicios().stream())
+                .filter(servicio -> servicio.getId() == null || servicio.getId() <= 0)
+                .count();
     }
 
     private String imagenCatalogo(Peluqueria peluqueria) {

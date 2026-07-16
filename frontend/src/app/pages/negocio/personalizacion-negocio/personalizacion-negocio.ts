@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { NegocioService } from '../../../services/negocio';
 import { AuthService } from '../../../services/auth';
 import { DetallePeluqueria } from '../../../services/catalogo';
+import { PlanActual, PlanService } from '../../../services/plan';
 
 interface Servicio {
   id: number;
@@ -58,6 +59,7 @@ export class PersonalizacionNegocio implements OnInit {
   cargando = true;
   guardando = false;
   error = '';
+  planActual: PlanActual | null = null;
 
   nuevaCategoria = {
     nombre: '',
@@ -81,6 +83,7 @@ export class PersonalizacionNegocio implements OnInit {
   constructor(
     private negocioService: NegocioService,
     private authService: AuthService,
+    private planService: PlanService,
     private router: Router
   ) {}
 
@@ -94,6 +97,7 @@ export class PersonalizacionNegocio implements OnInit {
 
     this.usuarioId = usuario.id;
     this.peluqueriaId = usuario.peluqueriaId;
+    this.cargarPlan();
     this.cargarPersonalizacion();
   }
 
@@ -110,6 +114,34 @@ export class PersonalizacionNegocio implements OnInit {
         this.error = error.error?.mensaje || 'No se pudo cargar la información del negocio.';
       }
     });
+  }
+
+  cargarPlan(): void {
+    if (!this.usuarioId) return;
+
+    this.planService.obtenerPlan(this.usuarioId).subscribe({
+      next: plan => this.planActual = plan,
+      error: () => this.planActual = null
+    });
+  }
+
+  limiteServiciosAlcanzado(): boolean {
+    if (!this.planActual || this.planActual.premium || this.planActual.limiteServicios === null) {
+      return false;
+    }
+    return this.totalServicios() >= this.planActual.limiteServicios;
+  }
+
+  textoUsoPlan(): string {
+    if (!this.planActual) return '';
+    if (this.planActual.premium) {
+      return `Premium · ${this.totalServicios()} servicios · sin límite`;
+    }
+    return `Standard · ${this.totalServicios()} de ${this.planActual.limiteServicios || 5} servicios`;
+  }
+
+  irAPlanes(): void {
+    this.router.navigate(['/negocio/planes']);
   }
 
   seleccionarPortada(event: Event): void {
@@ -179,6 +211,16 @@ export class PersonalizacionNegocio implements OnInit {
   }
 
   abrirModalServicio(): void {
+    if (this.limiteServiciosAlcanzado()) {
+      const irAPlanes = window.confirm(
+        'Has alcanzado el límite de 5 servicios del Plan Standard. ¿Deseas ver el Plan Premium?'
+      );
+      if (irAPlanes) {
+        this.router.navigate(['/negocio/planes']);
+      }
+      return;
+    }
+
     this.nuevoServicio = this.servicioVacio();
     this.nuevoServicio.categoriaId =
       this.categoriaSeleccionada !== 'todas'

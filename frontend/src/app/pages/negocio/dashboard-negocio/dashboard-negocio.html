@@ -18,7 +18,7 @@
       {{ error }}
     </p>
 
-    <div class="grid sm:grid-cols-3 gap-4">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
       <article class="rounded-2xl border border-[#DDE2EB] bg-white p-5 shadow-sm">
         <p class="text-xs text-[#657089]">Reservas activas</p>
         <p class="text-3xl font-bold text-[#071326] mt-2">{{ pendientes() }}</p>
@@ -31,6 +31,15 @@
         <p class="text-xs text-[#657089]">Importe de reservas</p>
         <p class="text-3xl font-bold text-[#071326] mt-2">S/ {{ ingresos() | number:'1.2-2' }}</p>
       </article>
+      <a routerLink="/negocio/planes"
+         class="rounded-2xl border border-[#DDE2EB] bg-white p-5 shadow-sm hover:border-[#7357F4] transition">
+        <p class="text-xs text-[#657089]">Plan actual</p>
+        <p class="text-2xl font-bold text-[#071326] mt-2">{{ planActual?.plan || 'STANDARD' }}</p>
+        <p class="mt-1 text-[11px] text-[#7357F4] font-semibold">
+          <ng-container *ngIf="planActual?.premium; else usoStandard">Servicios ilimitados</ng-container>
+          <ng-template #usoStandard>{{ planActual?.serviciosUsados || 0 }}/{{ planActual?.limiteServicios || 5 }} servicios</ng-template>
+        </p>
+      </a>
     </div>
 
     <div class="grid lg:grid-cols-2 gap-4 items-start">

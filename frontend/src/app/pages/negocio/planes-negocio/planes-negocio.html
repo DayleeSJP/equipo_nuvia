@@ -1,0 +1,79 @@
+<main class="min-h-full bg-[#F8F1EC] px-5 py-8 text-[#281713]">
+  <div class="max-w-[1180px] mx-auto">
+    <p class="text-[11px] font-bold uppercase tracking-[5px] text-[#C09C75]">Planes para negocios</p>
+    <h1 class="mt-4 text-4xl sm:text-5xl font-bold leading-tight">
+      Crece con el plan
+      <span class="block font-serif italic text-[#C09C75]">que más te conviene.</span>
+    </h1>
+
+    <p *ngIf="cargando" class="mt-8 text-sm text-[#806D66]">Cargando tu plan...</p>
+    <p *ngIf="error" class="mt-6 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">{{ error }}</p>
+    <p *ngIf="mensaje" class="mt-6 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{{ mensaje }}</p>
+
+    <div *ngIf="planActual" class="mt-10 grid lg:grid-cols-2 gap-6 items-stretch">
+      <article class="relative rounded-[26px] border border-[#E5D8D0] bg-white p-7 sm:p-9 min-h-[560px] flex flex-col">
+        <span *ngIf="!esPremium()" class="absolute top-7 right-7 rounded-full bg-[#F1E7DF] px-4 py-2 text-[10px] font-bold tracking-[1px]">PLAN ACTUAL</span>
+
+        <h2 class="text-2xl font-bold">Plan Standard</h2>
+        <p class="mt-2 text-sm text-[#9A7770]">Para comenzar a publicar</p>
+
+        <div class="mt-8 flex items-end gap-3">
+          <span class="text-5xl font-bold">Gratis</span>
+          <span class="pb-1 text-sm text-[#9A7770]">Sin costo mensual</span>
+        </div>
+
+        <p class="mt-4 rounded-xl bg-[#FAF5F1] px-4 py-3 text-sm font-semibold text-[#6D4C42]">{{ !esPremium() ? usoServicios() : 'Hasta 5 servicios' }}</p>
+
+        <ul class="mt-7 space-y-4 text-base text-[#6F5D57]">
+          <li>✓ Perfil básico de negocio</li>
+          <li>✓ Agregar hasta 5 servicios</li>
+          <li>✓ Recibir reservas</li>
+          <li>✓ Resumen básico de citas</li>
+          <li>✓ Presencia en la sección Nuevo</li>
+        </ul>
+
+        <button type="button"
+                class="mt-auto w-full h-14 rounded-xl bg-[#F1E7DF] font-bold disabled:cursor-not-allowed disabled:opacity-70"
+                [disabled]="!esPremium() || procesando"
+                (click)="usarStandard()">
+          {{ !esPremium() ? 'Plan actual' : (procesando ? 'Procesando...' : 'Volver a Standard') }}
+        </button>
+      </article>
+
+      <article class="relative rounded-[26px] bg-[#4A352E] p-7 sm:p-9 text-white min-h-[560px] flex flex-col">
+        <span class="absolute top-7 right-7 rounded-full bg-[#C9A176] px-4 py-2 text-[10px] font-bold tracking-[1px]">MÁS POPULAR</span>
+        <span *ngIf="esPremium()" class="absolute top-[74px] right-7 rounded-full border border-[#D8BEA4] px-4 py-2 text-[10px] font-bold tracking-[1px]">PLAN ACTUAL</span>
+
+        <h2 class="text-2xl font-bold">Plan Premium</h2>
+        <p class="mt-2 text-sm text-[#D8C2BA]">Para negocios en crecimiento</p>
+
+        <div class="mt-8 flex items-end gap-3">
+          <span class="text-6xl font-bold">S/49</span>
+          <span class="pb-2 text-lg text-[#D8C2BA]">/mes</span>
+        </div>
+        <p class="mt-2 text-sm text-[#D8C2BA]">Cancela cuando quieras</p>
+
+        <p *ngIf="esPremium()" class="mt-4 rounded-xl bg-white/10 px-4 py-3 text-sm font-semibold">
+          {{ usoServicios() }}
+          <span *ngIf="planActual.fechaFin" class="block mt-1 font-normal text-[#E7D6CF]">Activo hasta {{ planActual.fechaFin | date:'dd/MM/yyyy' }}</span>
+        </p>
+
+        <ul class="mt-7 space-y-4 text-base text-[#F3E5DF]">
+          <li>✓ Todo lo del Plan Standard</li>
+          <li>✓ Aparición en Recomendado</li>
+          <li>✓ Servicios ilimitados</li>
+          <li>✓ Perfil destacado en el catálogo</li>
+          <li>✓ Estadísticas avanzadas</li>
+          <li>✓ Soporte prioritario</li>
+        </ul>
+
+        <button type="button"
+                class="mt-auto w-full h-14 rounded-xl bg-[#C9A176] text-white font-bold disabled:cursor-not-allowed disabled:opacity-70"
+                [disabled]="esPremium() || procesando"
+                (click)="activarPremium()">
+          {{ esPremium() ? 'Plan actual' : (procesando ? 'Activando...' : 'Activar Premium') }}
+        </button>
+      </article>
+    </div>
+  </div>
+</main>

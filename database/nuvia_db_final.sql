@@ -1,6 +1,4 @@
--- Active: 1734492315858@@127.0.0.1@3306
--- NUVIA - Base de datos final (sin planes ni suscripciones)
--- IMPORTANTE: este script reinicia la base nuvia_db. Haz una copia si necesitas conservar datos.
+
 
 CREATE DATABASE IF NOT EXISTS nuvia_db
   CHARACTER SET utf8mb4
