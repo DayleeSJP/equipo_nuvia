@@ -1,12 +1,12 @@
 <section class="h-screen bg-[#F6F7F9] text-[#071326] flex overflow-hidden">
-  <aside class="w-[48px] bg-[#070B10] flex flex-col items-center shrink-0">
+  <aside class="w-12 bg-[#070B10] flex flex-col items-center shrink-0">
     <div class="mt-4 mb-8 w-8 h-8 flex items-center justify-center rounded-xl text-white font-bold text-sm">N</div>
 
     <nav class="flex flex-1 flex-col items-center gap-5">
       <a routerLink="/negocio/dashboard" routerLinkActive="bg-[#7357F4] text-white"
          [routerLinkActiveOptions]="{ exact: true }"
          class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center text-[15px] transition"
-         title="Dashboard">⌂</a>
+         title="Dashboard">📊</a>
 
       <a routerLink="/negocio/calendario" routerLinkActive="bg-[#7357F4] text-white"
          class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center text-[15px] transition"
@@ -14,11 +14,12 @@
 
       <a routerLink="/negocio/personalizacion" routerLinkActive="bg-[#7357F4] text-white"
          class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center text-[15px] transition"
-         title="Personalización">◇</a>
+         title="Personalización">✏️</a>
 
       <a routerLink="/negocio/planes" routerLinkActive="bg-[#7357F4] text-white"
          class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center text-[15px] transition"
          title="Planes">★</a>
+         
     </nav>
 
     <div class="mb-5 flex flex-col items-center gap-4">
@@ -34,7 +35,7 @@
       <a routerLink="/" class="text-[15px] font-extrabold tracking-[-0.02em] hover:opacity-70 transition">Nuvia</a>
       <a routerLink="/negocio/personalizacion"
          class="hidden sm:flex h-[28px] items-center gap-2 rounded-full bg-[#7357F4] px-5 text-[11px] font-bold text-white">
-        Configurar catálogo <span class="text-[10px]">›</span>
+        Configurar catálogo <span class="text-[10px]">→</span>
       </a>
     </header>
 
