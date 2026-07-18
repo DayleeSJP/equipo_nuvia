@@ -4,6 +4,12 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../services/auth';
 import { PlanActual, PlanService } from '../../../services/plan';
 
+interface BeneficioPlan {
+  icono: 'servicios' | 'reservas' | 'estadisticas' | 'destacado' | 'ilimitado' | 'soporte';
+  nombre: string;
+  incluidoEnStandard: boolean;
+}
+
 @Component({
   selector: 'app-planes-negocio',
   imports: [CommonModule],
@@ -17,6 +23,42 @@ export class PlanesNegocio implements OnInit {
   error = '';
   mensaje = '';
   usuarioId: number | null = null;
+
+  modalPremiumAbierto = false;
+  premiumActivado = false;
+
+  readonly beneficios: BeneficioPlan[] = [
+    {
+      icono: 'servicios',
+      nombre: 'Hasta 5 servicios',
+      incluidoEnStandard: true
+    },
+    {
+      icono: 'reservas',
+      nombre: 'Recibir reservas',
+      incluidoEnStandard: true
+    },
+    {
+      icono: 'estadisticas',
+      nombre: 'Estadísticas básicas',
+      incluidoEnStandard: true
+    },
+    {
+      icono: 'destacado',
+      nombre: 'Perfil en Recomendado',
+      incluidoEnStandard: false
+    },
+    {
+      icono: 'ilimitado',
+      nombre: 'Servicios ilimitados',
+      incluidoEnStandard: false
+    },
+    {
+      icono: 'soporte',
+      nombre: 'Soporte prioritario',
+      incluidoEnStandard: false
+    }
+  ];
 
   constructor(
     private authService: AuthService,
@@ -54,13 +96,30 @@ export class PlanesNegocio implements OnInit {
     });
   }
 
-  activarPremium(): void {
-    if (!this.usuarioId || this.procesando || this.esPremium()) return;
+  abrirModalPremium(): void {
+    if (this.procesando || this.esPremium()) return;
 
-    const confirmar = window.confirm(
-      '¿Deseas activar el Plan Premium por S/ 49 durante un mes?'
-    );
-    if (!confirmar) return;
+    this.error = '';
+    this.mensaje = '';
+    this.premiumActivado = false;
+    this.modalPremiumAbierto = true;
+  }
+
+  cerrarModalPremium(): void {
+    if (this.procesando) return;
+
+    this.modalPremiumAbierto = false;
+    this.premiumActivado = false;
+  }
+
+  cerrarModalDesdeFondo(event: MouseEvent): void {
+    if (event.target === event.currentTarget) {
+      this.cerrarModalPremium();
+    }
+  }
+
+  confirmarPremium(): void {
+    if (!this.usuarioId || this.procesando || this.esPremium()) return;
 
     this.procesando = true;
     this.error = '';
@@ -70,7 +129,13 @@ export class PlanesNegocio implements OnInit {
       next: plan => {
         this.planActual = plan;
         this.procesando = false;
+        this.premiumActivado = true;
         this.mensaje = plan.mensaje || 'Plan Premium activado correctamente.';
+
+        window.setTimeout(() => {
+          this.modalPremiumAbierto = false;
+          this.premiumActivado = false;
+        }, 1300);
       },
       error: error => {
         this.procesando = false;
@@ -83,8 +148,9 @@ export class PlanesNegocio implements OnInit {
     if (!this.usuarioId || this.procesando || !this.esPremium()) return;
 
     const confirmar = window.confirm(
-      '¿Deseas volver al Plan Standard? Tus servicios existentes se conservarán, pero el límite para agregar nuevos será de 5.'
+      '¿Deseas volver al Plan Standard? Tus servicios existentes se conservarán, pero solo podrás agregar nuevos si tienes menos de 5.'
     );
+
     if (!confirmar) return;
 
     this.procesando = true;
@@ -108,11 +174,25 @@ export class PlanesNegocio implements OnInit {
     return this.planActual?.plan === 'PREMIUM';
   }
 
-  usoServicios(): string {
+  beneficioActivo(beneficio: BeneficioPlan): boolean {
+    return beneficio.incluidoEnStandard || this.esPremium();
+  }
+
+  textoPrecio(): string {
+    return this.esPremium() ? 'S/ 49 al mes' : 'Sin costo mensual';
+  }
+
+  textoEstadoServicios(): string {
     if (!this.planActual) return '';
-    if (this.planActual.limiteServicios === null) {
-      return `${this.planActual.serviciosUsados} servicios registrados · sin límite`;
+
+    if (this.esPremium() || this.planActual.limiteServicios === null) {
+      return 'Servicios ilimitados · perfil destacado activo';
     }
-    return `${this.planActual.serviciosUsados} de ${this.planActual.limiteServicios} servicios utilizados`;
+
+    return `Servicios: ${this.planActual.serviciosUsados}/${this.planActual.limiteServicios} usados`;
+  }
+
+  fechaFinPremium(): string | null {
+    return this.esPremium() ? this.planActual?.fechaFin || null : null;
   }
 }

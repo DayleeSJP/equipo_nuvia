@@ -1,133 +1,425 @@
-<main class="min-h-full p-5 bg-[#F8F9FC]">
-  <div class="max-w-[1180px] mx-auto space-y-5">
+<main class="min-h-full bg-[#F8F9FC] p-5">
+  <div class="mx-auto max-w-[1380px]">
 
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-      <div>
-        <p class="text-[11px] uppercase tracking-[3px] text-[#8065FF] font-bold">Panel del negocio</p>
-        <h1 class="text-2xl font-bold text-[#071326] mt-1">{{ nombreNegocio }}</h1>
-        <p class="text-sm text-[#657089] mt-1">Reservas guardadas y filtradas para este negocio.</p>
-      </div>
-
-      <a routerLink="/negocio/calendario"
-         class="h-10 px-5 rounded-full bg-[#7357F4] text-white text-sm font-semibold inline-flex items-center justify-center">
-        Abrir calendario
-      </a>
-    </div>
-
-    <p *ngIf="error" class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+    <p *ngIf="error" class="mb-5 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
       {{ error }}
     </p>
 
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      <article class="rounded-2xl border border-[#DDE2EB] bg-white p-5 shadow-sm">
-        <p class="text-xs text-[#657089]">Reservas activas</p>
-        <p class="text-3xl font-bold text-[#071326] mt-2">{{ pendientes() }}</p>
-      </article>
-      <article class="rounded-2xl border border-[#DDE2EB] bg-white p-5 shadow-sm">
-        <p class="text-xs text-[#657089]">Completadas</p>
-        <p class="text-3xl font-bold text-[#071326] mt-2">{{ completadas() }}</p>
-      </article>
-      <article class="rounded-2xl border border-[#DDE2EB] bg-white p-5 shadow-sm">
-        <p class="text-xs text-[#657089]">Importe de reservas</p>
-        <p class="text-3xl font-bold text-[#071326] mt-2">S/ {{ ingresos() | number:'1.2-2' }}</p>
-      </article>
-      <a routerLink="/negocio/planes"
-         class="rounded-2xl border border-[#DDE2EB] bg-white p-5 shadow-sm hover:border-[#7357F4] transition">
-        <p class="text-xs text-[#657089]">Plan actual</p>
-        <p class="text-2xl font-bold text-[#071326] mt-2">{{ planActual?.plan || 'STANDARD' }}</p>
-        <p class="mt-1 text-[11px] text-[#7357F4] font-semibold">
-          <ng-container *ngIf="planActual?.premium; else usoStandard">Servicios ilimitados</ng-container>
-          <ng-template #usoStandard>{{ planActual?.serviciosUsados || 0 }}/{{ planActual?.limiteServicios || 5 }} servicios</ng-template>
-        </p>
-      </a>
-    </div>
+    <ng-container *ngIf="planActual?.premium; else dashboardStandard">
+      <section class="premium-dashboard space-y-5">
 
-    <div class="grid lg:grid-cols-2 gap-4 items-start">
-      <article class="rounded-2xl border border-[#DDE2EB] bg-white shadow-sm overflow-hidden">
-        <div class="px-5 py-4 border-b border-[#EEF1F5] flex items-center justify-between">
+        <header class="premium-header">
           <div>
-            <h2 class="text-[15px] font-bold text-[#071326]">Actividad de citas</h2>
-            <p class="text-[11px] text-[#657089] mt-1">Hoy · {{ citasHoy.length }} citas</p>
+            <p class="premium-kicker">Panel Premium</p>
+            <div class="mt-1 flex flex-wrap items-center gap-3">
+              <h1 class="text-[29px] font-bold leading-tight text-[#071326]">{{ nombreNegocio }}</h1>
+              <span class="premium-badge">★ Premium activo</span>
+            </div>
+            <p class="mt-1 text-sm text-[#657089]">Análisis avanzado del rendimiento de tu negocio.</p>
           </div>
-        </div>
 
-        <div class="p-5 space-y-3">
-          <p *ngIf="!cargando && citasHoy.length === 0" class="text-sm text-[#657089] text-center py-8">
-            No hay reservas programadas para hoy.
-          </p>
-
-          <div *ngFor="let cita of citasHoy"
-               class="flex items-start gap-3 p-3 rounded-xl border border-[#EEF1F5] hover:bg-[#F7F4FF] transition">
-            <div class="w-14 h-12 rounded-xl bg-[#E5DCFF] flex items-center justify-center text-[#7357F4] text-sm font-bold shrink-0">
-              {{ cita.hora.slice(0, 5) }}
+          <div class="premium-header-actions">
+            <div class="period-selector" aria-label="Seleccionar periodo">
+              <button
+                *ngFor="let opcion of opcionesPeriodo"
+                type="button"
+                (click)="seleccionarPeriodo(opcion.dias)"
+                [class.active]="periodoDias === opcion.dias">
+                {{ opcion.etiqueta }}
+              </button>
             </div>
 
-            <div class="flex-1 min-w-0">
-              <div class="flex items-start justify-between gap-3">
-                <div>
-                  <p class="text-sm font-bold text-[#071326]">{{ cita.servicio }}</p>
-                  <p class="text-xs text-[#4E5A70] mt-1">
-                    {{ cita.cliente }} · {{ cita.duracionMin }} min
-                  </p>
-                  <p class="text-[11px] text-[#7B8496] mt-1">{{ cita.trabajador }}</p>
+            <button type="button" class="export-button" (click)="exportarInforme()">
+              <span aria-hidden="true">⇩</span>
+              Exportar informe
+            </button>
+
+            <a routerLink="/negocio/planes" class="premium-plan-card">
+              <div>
+                <p>Plan actual</p>
+                <strong>PREMIUM</strong>
+                <span>Servicios ilimitados</span>
+              </div>
+              <div class="premium-crown" aria-hidden="true">♛</div>
+            </a>
+          </div>
+        </header>
+
+        <div class="premium-kpi-grid">
+          <article class="premium-kpi-card">
+            <div class="kpi-topline">
+              <p>Ingresos del periodo</p>
+              <span class="kpi-icon sparkline-icon">⌁</span>
+            </div>
+            <strong>S/ {{ ingresosPeriodo | number:'1.2-2' }}</strong>
+            <p class="kpi-change" [class.positive]="variacionIngresos >= 0" [class.negative]="variacionIngresos < 0">
+              {{ flecha(variacionIngresos) }} {{ absoluto(variacionIngresos) | number:'1.1-1' }}% vs. periodo anterior
+            </p>
+          </article>
+
+          <article class="premium-kpi-card">
+            <div class="kpi-topline">
+              <p>Reservas totales</p>
+              <span class="kpi-icon">▣</span>
+            </div>
+            <strong>{{ reservasPeriodo }}</strong>
+            <p class="kpi-change" [class.positive]="variacionReservas >= 0" [class.negative]="variacionReservas < 0">
+              {{ flecha(variacionReservas) }} {{ absoluto(variacionReservas) | number:'1.1-1' }}% vs. periodo anterior
+            </p>
+          </article>
+
+          <article class="premium-kpi-card">
+            <div class="kpi-topline">
+              <p>Ticket promedio</p>
+              <span class="kpi-icon">▤</span>
+            </div>
+            <strong>S/ {{ ticketPromedio | number:'1.2-2' }}</strong>
+            <p class="kpi-change" [class.positive]="variacionTicket >= 0" [class.negative]="variacionTicket < 0">
+              {{ flecha(variacionTicket) }} {{ absoluto(variacionTicket) | number:'1.1-1' }}% vs. periodo anterior
+            </p>
+          </article>
+
+          <article class="premium-kpi-card">
+            <div class="kpi-topline">
+              <p>Clientes únicos</p>
+              <span class="kpi-icon">◎</span>
+            </div>
+            <strong>{{ clientesUnicos }}</strong>
+            <p class="kpi-change" [class.positive]="variacionClientes >= 0" [class.negative]="variacionClientes < 0">
+              {{ flecha(variacionClientes) }} {{ absoluto(variacionClientes) | number:'1.1-1' }}% vs. periodo anterior
+            </p>
+          </article>
+
+          <article class="premium-kpi-card">
+            <div class="kpi-topline">
+              <p>Tasa de retorno</p>
+              <span class="kpi-icon">↻</span>
+            </div>
+            <strong>{{ tasaRetorno | number:'1.1-1' }}%</strong>
+            <p class="kpi-change" [class.positive]="variacionRetorno >= 0" [class.negative]="variacionRetorno < 0">
+              {{ flecha(variacionRetorno) }} {{ absoluto(variacionRetorno) | number:'1.1-1' }} pp vs. periodo anterior
+            </p>
+          </article>
+
+          <article class="premium-kpi-card">
+            <div class="kpi-topline">
+              <p>Cancelaciones</p>
+              <span class="kpi-icon cancel-icon">×</span>
+            </div>
+            <strong>{{ cancelacionesPeriodo }}</strong>
+            <p class="kpi-change" [class.negative]="variacionCancelaciones > 0" [class.positive]="variacionCancelaciones <= 0">
+              {{ flecha(variacionCancelaciones) }} {{ absoluto(variacionCancelaciones) }} vs. periodo anterior
+            </p>
+          </article>
+        </div>
+
+        <div class="premium-main-grid">
+          <article class="premium-panel chart-panel">
+            <div class="panel-heading chart-heading">
+              <div>
+                <h2>Rendimiento del negocio</h2>
+                <p>Ingresos y reservas en el periodo seleccionado</p>
+              </div>
+              <div class="chart-legend">
+                <span><i class="legend-dot income"></i> Ingresos (S/)</span>
+                <span><i class="legend-dot bookings"></i> Reservas</span>
+              </div>
+            </div>
+
+            <div class="chart-wrap" role="img" aria-label="Gráfico de ingresos y reservas">
+              <svg viewBox="0 0 760 220" preserveAspectRatio="none">
+                <g *ngFor="let linea of lineasGrafico">
+                  <line class="chart-grid-line" x1="54" x2="704" [attr.y1]="linea.y" [attr.y2]="linea.y"></line>
+                  <text class="chart-axis-text" x="4" [attr.y]="linea.y + 4">
+                    S/ {{ linea.ingreso | number:'1.0-0' }}
+                  </text>
+                  <text class="chart-axis-text" x="752" text-anchor="end" [attr.y]="linea.y + 4">
+                    {{ linea.reservas }}
+                  </text>
+                </g>
+
+                <polyline class="chart-line bookings" [attr.points]="puntosReservas"></polyline>
+                <polyline class="chart-line income" [attr.points]="puntosIngresos"></polyline>
+
+                <text
+                  *ngFor="let etiqueta of etiquetasGrafico"
+                  class="chart-axis-text chart-date"
+                  [attr.x]="etiqueta.x"
+                  y="207"
+                  text-anchor="middle">
+                  {{ etiqueta.texto }}
+                </text>
+              </svg>
+            </div>
+          </article>
+
+          <article class="premium-panel services-panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Servicios más rentables</h2>
+                <p>Resultados del periodo seleccionado</p>
+              </div>
+            </div>
+
+            <div class="services-table-head">
+              <span>Servicio</span>
+              <span>Reservas</span>
+              <span>Ingresos</span>
+            </div>
+
+            <div *ngIf="serviciosRentables.length; else sinServicios" class="services-list">
+              <div *ngFor="let servicio of serviciosRentables" class="service-row">
+                <div class="service-values">
+                  <strong>{{ servicio.servicio }}</strong>
+                  <span>{{ servicio.reservas }}</span>
+                  <span>S/ {{ servicio.ingresos | number:'1.2-2' }}</span>
                 </div>
-                <span class="px-2.5 py-1 rounded-full bg-[#F1E7DF] text-[#4A352E] text-[10px] font-semibold">
-                  {{ cita.estado }}
+                <div class="service-track">
+                  <div class="service-progress" [style.width.%]="servicio.porcentaje"></div>
+                </div>
+              </div>
+            </div>
+
+            <ng-template #sinServicios>
+              <p class="empty-panel-message">Todavía no hay reservas suficientes para comparar servicios.</p>
+            </ng-template>
+
+            <a routerLink="/negocio/personalizacion" class="panel-link">Ver todos los servicios →</a>
+          </article>
+        </div>
+
+        <div class="premium-lower-grid">
+          <article class="premium-panel demand-panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Horarios con mayor demanda</h2>
+                <p>Día y hora</p>
+              </div>
+            </div>
+
+            <div class="heatmap">
+              <div class="heatmap-hours">
+                <span></span>
+                <span *ngFor="let hora of horasDemanda">{{ hora }}</span>
+              </div>
+
+              <div *ngFor="let dia of diasDemanda" class="heatmap-row">
+                <span class="day-label">{{ dia.etiqueta }}</span>
+                <span
+                  *ngFor="let celda of dia.celdas"
+                  class="heat-cell"
+                  [ngClass]="'heat-' + celda.intensidad"
+                  [title]="dia.etiqueta + ' ' + celda.hora + ':00 · ' + celda.cantidad + ' reservas'">
                 </span>
               </div>
+            </div>
 
-              <div class="flex flex-wrap gap-3 mt-3 text-[11px] font-semibold">
-                <button *ngIf="cita.estado !== 'En proceso' && cita.estado !== 'Completada' && cita.estado !== 'Cancelada'"
-                        type="button" (click)="cambiarEstado(cita, 'En proceso')"
-                        class="text-[#7357F4] hover:underline">
-                  Iniciar
-                </button>
-                <button *ngIf="cita.estado !== 'Completada' && cita.estado !== 'Cancelada'"
-                        type="button" (click)="cambiarEstado(cita, 'Completada')"
-                        class="text-emerald-600 hover:underline">
-                  Completar
-                </button>
-                <button *ngIf="cita.estado !== 'Cancelada' && cita.estado !== 'Completada'"
-                        type="button" (click)="cambiarEstado(cita, 'Cancelada')"
-                        class="text-rose-500 hover:underline">
-                  Cancelar
-                </button>
+            <div class="heatmap-legend">
+              <span><i class="heat-cell heat-1"></i> Baja demanda</span>
+              <span><i class="heat-cell heat-4"></i> Alta demanda</span>
+            </div>
+          </article>
+
+          <article class="premium-panel clients-panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Clientes</h2>
+                <p>Distribución de clientes</p>
               </div>
             </div>
-          </div>
-        </div>
-      </article>
 
-      <article class="rounded-2xl border border-[#DDE2EB] bg-white shadow-sm overflow-hidden">
-        <div class="px-5 py-4 border-b border-[#EEF1F5] flex items-center justify-between">
+            <div class="clients-content">
+              <div class="client-donut" [style.background]="donutClientes">
+                <div class="client-donut-center">
+                  <strong>{{ clientesUnicos }}</strong>
+                  <span>Clientes únicos</span>
+                </div>
+              </div>
+
+              <div class="client-legend">
+                <div>
+                  <i class="legend-dot income"></i>
+                  <span>Recurrentes</span>
+                  <strong>{{ clientesRecurrentes }} ({{ porcentajeRecurrentes | number:'1.1-1' }}%)</strong>
+                </div>
+                <div>
+                  <i class="legend-dot bookings"></i>
+                  <span>Nuevos</span>
+                  <strong>{{ clientesNuevos }} ({{ porcentajeNuevos | number:'1.1-1' }}%)</strong>
+                </div>
+              </div>
+            </div>
+
+            <div class="return-rate">
+              <div>
+                <span>Tasa de retorno</span>
+                <strong>{{ tasaRetorno | number:'1.1-1' }}%</strong>
+              </div>
+              <p [class.positive]="variacionRetorno >= 0" [class.negative]="variacionRetorno < 0">
+                {{ flecha(variacionRetorno) }} {{ absoluto(variacionRetorno) | number:'1.1-1' }} pp
+              </p>
+            </div>
+          </article>
+
+          <article class="premium-panel client-summary-panel">
+            <div class="panel-heading">
+              <div>
+                <h2>Resumen de clientes</h2>
+                <p>Comportamiento durante el periodo</p>
+              </div>
+            </div>
+
+            <div class="client-summary-list">
+              <div>
+                <span class="summary-icon">☆</span>
+                <p>Nuevos clientes</p>
+                <strong>{{ clientesNuevos }}</strong>
+              </div>
+              <div>
+                <span class="summary-icon">↻</span>
+                <p>Clientes recurrentes</p>
+                <strong>{{ clientesRecurrentes }}</strong>
+              </div>
+              <div>
+                <span class="summary-icon">⌁</span>
+                <p>Visitas promedio por cliente</p>
+                <strong>{{ visitasPromedio | number:'1.1-1' }}</strong>
+              </div>
+              <div>
+                <span class="summary-icon">▤</span>
+                <p>Gasto promedio por cliente</p>
+                <strong>S/ {{ gastoPromedio | number:'1.2-2' }}</strong>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </ng-container>
+
+    <ng-template #dashboardStandard>
+      <section class="space-y-5">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 class="text-[15px] font-bold text-[#071326]">Próximas reservas</h2>
-            <p class="text-[11px] text-[#657089] mt-1">Clientes que reservaron este negocio</p>
+            <p class="text-[11px] font-bold uppercase tracking-[3px] text-[#8065FF]">Panel del negocio</p>
+            <h1 class="mt-1 text-2xl font-bold text-[#071326]">{{ nombreNegocio }}</h1>
+            <p class="mt-1 text-sm text-[#657089]">Reservas guardadas y filtradas para este negocio.</p>
           </div>
-          <a routerLink="/negocio/calendario" class="text-[11px] font-semibold text-[#7357F4] hover:underline">
-            Ver calendario →
+
+          <a routerLink="/negocio/calendario"
+             class="inline-flex h-10 items-center justify-center rounded-full bg-[#7357F4] px-5 text-sm font-semibold text-white">
+            Abrir calendario
           </a>
         </div>
 
-        <div class="p-5 space-y-3">
-          <p *ngIf="!cargando && proximasCitas.length === 0" class="text-sm text-[#657089] text-center py-8">
-            Todavía no hay próximas reservas.
-          </p>
-
-          <div *ngFor="let cita of proximasCitas"
-               class="flex items-center gap-3 p-3 rounded-xl border border-[#EEF1F5] hover:bg-[#F7F4FF] transition">
-            <div class="text-center shrink-0 w-20">
-              <p class="text-xs font-bold text-[#42506B]">{{ cita.hora.slice(0, 5) }}</p>
-              <p class="text-[10px] text-[#8B93A5]">{{ cita.fecha | date:'dd/MM/yyyy' }}</p>
-            </div>
-            <div class="flex-1 min-w-0">
-              <p class="text-sm font-bold text-[#071326] truncate">{{ cita.servicio }}</p>
-              <p class="text-xs text-[#4E5A70] truncate">{{ cita.cliente }} · {{ cita.trabajador }}</p>
-            </div>
-            <span class="text-xs font-semibold text-[#7357F4]">S/ {{ cita.precio }}</span>
-          </div>
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <article class="rounded-2xl border border-[#DDE2EB] bg-white p-5 shadow-sm">
+            <p class="text-xs text-[#657089]">Reservas activas</p>
+            <p class="mt-2 text-3xl font-bold text-[#071326]">{{ pendientes() }}</p>
+          </article>
+          <article class="rounded-2xl border border-[#DDE2EB] bg-white p-5 shadow-sm">
+            <p class="text-xs text-[#657089]">Completadas</p>
+            <p class="mt-2 text-3xl font-bold text-[#071326]">{{ completadas() }}</p>
+          </article>
+          <article class="rounded-2xl border border-[#DDE2EB] bg-white p-5 shadow-sm">
+            <p class="text-xs text-[#657089]">Importe de reservas</p>
+            <p class="mt-2 text-3xl font-bold text-[#071326]">S/ {{ ingresos() | number:'1.2-2' }}</p>
+          </article>
+          <a routerLink="/negocio/planes"
+             class="rounded-2xl border border-[#DDE2EB] bg-white p-5 shadow-sm transition hover:border-[#7357F4]">
+            <p class="text-xs text-[#657089]">Plan actual</p>
+            <p class="mt-2 text-2xl font-bold text-[#071326]">{{ planActual?.plan || 'STANDARD' }}</p>
+            <p class="mt-1 text-[11px] font-semibold text-[#7357F4]">
+              {{ planActual?.serviciosUsados || 0 }}/{{ planActual?.limiteServicios || 5 }} servicios
+            </p>
+          </a>
         </div>
-      </article>
-    </div>
+
+        <div class="grid items-start gap-4 lg:grid-cols-2">
+          <article class="overflow-hidden rounded-2xl border border-[#DDE2EB] bg-white shadow-sm">
+            <div class="flex items-center justify-between border-b border-[#EEF1F5] px-5 py-4">
+              <div>
+                <h2 class="text-[15px] font-bold text-[#071326]">Actividad de citas</h2>
+                <p class="mt-1 text-[11px] text-[#657089]">Hoy · {{ citasHoy.length }} citas</p>
+              </div>
+            </div>
+
+            <div class="space-y-3 p-5">
+              <p *ngIf="!cargando && citasHoy.length === 0" class="py-8 text-center text-sm text-[#657089]">
+                No hay reservas programadas para hoy.
+              </p>
+
+              <div *ngFor="let cita of citasHoy"
+                   class="flex items-start gap-3 rounded-xl border border-[#EEF1F5] p-3 transition hover:bg-[#F7F4FF]">
+                <div class="flex h-12 w-14 shrink-0 items-center justify-center rounded-xl bg-[#E5DCFF] text-sm font-bold text-[#7357F4]">
+                  {{ cita.hora.slice(0, 5) }}
+                </div>
+
+                <div class="min-w-0 flex-1">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <p class="text-sm font-bold text-[#071326]">{{ cita.servicio }}</p>
+                      <p class="mt-1 text-xs text-[#4E5A70]">{{ cita.cliente }} · {{ cita.duracionMin }} min</p>
+                      <p class="mt-1 text-[11px] text-[#7B8496]">{{ cita.trabajador }}</p>
+                    </div>
+                    <span class="rounded-full bg-[#F1E7DF] px-2.5 py-1 text-[10px] font-semibold text-[#4A352E]">
+                      {{ cita.estado }}
+                    </span>
+                  </div>
+
+                  <div class="mt-3 flex flex-wrap gap-3 text-[11px] font-semibold">
+                    <button *ngIf="cita.estado !== 'En proceso' && cita.estado !== 'Completada' && cita.estado !== 'Cancelada'"
+                            type="button" (click)="cambiarEstado(cita, 'En proceso')"
+                            class="text-[#7357F4] hover:underline">
+                      Iniciar
+                    </button>
+                    <button *ngIf="cita.estado !== 'Completada' && cita.estado !== 'Cancelada'"
+                            type="button" (click)="cambiarEstado(cita, 'Completada')"
+                            class="text-emerald-600 hover:underline">
+                      Completar
+                    </button>
+                    <button *ngIf="cita.estado !== 'Cancelada' && cita.estado !== 'Completada'"
+                            type="button" (click)="cambiarEstado(cita, 'Cancelada')"
+                            class="text-rose-500 hover:underline">
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </article>
+
+          <article class="overflow-hidden rounded-2xl border border-[#DDE2EB] bg-white shadow-sm">
+            <div class="flex items-center justify-between border-b border-[#EEF1F5] px-5 py-4">
+              <div>
+                <h2 class="text-[15px] font-bold text-[#071326]">Próximas reservas</h2>
+                <p class="mt-1 text-[11px] text-[#657089]">Clientes que reservaron este negocio</p>
+              </div>
+              <a routerLink="/negocio/calendario" class="text-[11px] font-semibold text-[#7357F4] hover:underline">
+                Ver calendario →
+              </a>
+            </div>
+
+            <div class="space-y-3 p-5">
+              <p *ngIf="!cargando && proximasCitas.length === 0" class="py-8 text-center text-sm text-[#657089]">
+                Todavía no hay próximas reservas.
+              </p>
+
+              <div *ngFor="let cita of proximasCitas"
+                   class="flex items-center gap-3 rounded-xl border border-[#EEF1F5] p-3 transition hover:bg-[#F7F4FF]">
+                <div class="w-20 shrink-0 text-center">
+                  <p class="text-xs font-bold text-[#42506B]">{{ cita.hora.slice(0, 5) }}</p>
+                  <p class="text-[10px] text-[#8B93A5]">{{ cita.fecha | date:'dd/MM/yyyy' }}</p>
+                </div>
+                <div class="min-w-0 flex-1">
+                  <p class="truncate text-sm font-bold text-[#071326]">{{ cita.servicio }}</p>
+                  <p class="truncate text-xs text-[#4E5A70]">{{ cita.cliente }} · {{ cita.trabajador }}</p>
+                </div>
+                <span class="text-xs font-semibold text-[#7357F4]">S/ {{ cita.precio }}</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </section>
+    </ng-template>
   </div>
 </main>
