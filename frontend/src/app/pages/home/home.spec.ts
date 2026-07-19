@@ -20,4 +20,10 @@ describe('Home', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('debe renderizar el botón Buscar', () => {
+    const compiled = fixture.nativeElement as HTMLElement;
+    const boton = compiled.querySelector('button[aria-label="Buscar negocios"]');
+    expect(boton).toBeTruthy();
+  });
 });

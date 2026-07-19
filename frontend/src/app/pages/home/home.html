@@ -151,7 +151,7 @@
                         </select>
                     </label>
 
-                    <button type="button" (click)="buscarCatalogo()"
+                    <button type="button" aria-label="Buscar negocios" (click)="buscarCatalogo()"
                         class="h-12 px-8 rounded-xl bg-[#D48B45] text-white font-bold">
                         Buscar
                     </button>
@@ -180,7 +180,7 @@
                         <article *ngFor="let card of recomendados" [routerLink]="['/catalogo/detalle', card.id]"
                             class="min-w-[240px] cursor-pointer">
                             <div class="relative h-[140px] rounded-[10px] overflow-hidden">
-                                <img [src]="card.imagen" [alt]="card.nombre" class="w-full h-full object-cover">
+                                <img [src]="card.imagen" [alt]="card.nombre" loading="lazy" class="w-full h-full object-cover">
                                 <span
                                     class="absolute top-3 left-3 bg-white text-[10px] font-bold px-3 py-1 rounded-full">
                                     Destacados
