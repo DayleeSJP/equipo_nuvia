@@ -1,46 +1,113 @@
-<section class="h-screen bg-[#F6F7F9] text-[#071326] flex overflow-hidden">
-  <aside class="w-12 bg-[#070B10] flex flex-col items-center shrink-0">
-    <div class="mt-4 mb-8 w-8 h-8 flex items-center justify-center rounded-xl text-white font-bold text-sm">N</div>
+<section class="business-shell">
+  <aside class="business-sidebar" aria-label="Navegación del negocio">
+    <span class="blob blob-one" aria-hidden="true"></span>
+    <span class="blob blob-two" aria-hidden="true"></span>
+    <span class="blob blob-three" aria-hidden="true"></span>
 
-    <nav class="flex flex-1 flex-col items-center gap-5">
-      <a routerLink="/negocio/dashboard" routerLinkActive="bg-[#7357F4] text-white"
-         [routerLinkActiveOptions]="{ exact: true }"
-         class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center text-[15px] transition"
-         title="Dashboard">📊</a>
+    <div class="sidebar-glass">
+      <a routerLink="/negocio/dashboard" class="brand" aria-label="Ir al dashboard del negocio">
+        <span class="brand-mark">N</span>
+        <span class="brand-name">Nuvia negocio</span>
+      </a>
 
-      <a routerLink="/negocio/calendario" routerLinkActive="bg-[#7357F4] text-white"
-         class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center text-[15px] transition"
-         title="Calendario">📅</a>
+      <nav class="business-nav" aria-label="Secciones del panel">
+        <a
+          routerLink="/negocio/dashboard"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          class="nav-row"
+          style="--row-color: #6c5ce7"
+          title="Dashboard">
+          <span class="icon-box" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            </svg>
+          </span>
+          <span class="nav-label">Dashboard</span>
+        </a>
 
-      <a routerLink="/negocio/personalizacion" routerLinkActive="bg-[#7357F4] text-white"
-         class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center text-[15px] transition"
-         title="Personalización">✏️</a>
+        <a
+          routerLink="/negocio/calendario"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          class="nav-row"
+          style="--row-color: #3b9ae1"
+          title="Calendario">
+          <span class="icon-box" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+              <path d="M16 3v4M8 3v4M3 10h18"></path>
+              <path d="m9 16 2 2 4-4"></path>
+            </svg>
+          </span>
+          <span class="nav-label">Calendario</span>
+        </a>
 
-      <a routerLink="/negocio/planes" routerLinkActive="bg-[#7357F4] text-white"
-         class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center text-[15px] transition"
-         title="Planes">★</a>
-         
-    </nav>
+        <a
+          routerLink="/negocio/personalizacion"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          class="nav-row"
+          style="--row-color: #e8618c"
+          title="Personalización">
+          <span class="icon-box" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3a9 9 0 1 0 0 18h1.4a1.6 1.6 0 0 0 0-3.2H12a1.7 1.7 0 0 1 0-3.4h3.5A5.5 5.5 0 0 0 21 8.9 5.9 5.9 0 0 0 15.1 3H12Z"></path>
+              <circle cx="7.5" cy="10" r="1"></circle>
+              <circle cx="10" cy="6.8" r="1"></circle>
+              <circle cx="14" cy="6.8" r="1"></circle>
+              <circle cx="16.5" cy="10" r="1"></circle>
+            </svg>
+          </span>
+          <span class="nav-label">Personalización</span>
+        </a>
 
-    <div class="mb-5 flex flex-col items-center gap-4">
-      <a routerLink="/" class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center" title="Ver catálogo">↗</a>
-      <button type="button" (click)="cerrarSesion()"
-              class="w-8 h-8 rounded-lg text-[#7584A3] hover:bg-[#161B22] hover:text-white flex items-center justify-center"
-              title="Cerrar sesión">↪</button>
+        <a
+          routerLink="/negocio/planes"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: true }"
+          ariaCurrentWhenActive="page"
+          class="nav-row"
+          style="--row-color: #d6a536"
+          title="Planes">
+          <span class="icon-box" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m3 7 4.5 4L12 5l4.5 6L21 7l-2 11H5L3 7Z"></path>
+              <path d="M5 18h14"></path>
+            </svg>
+          </span>
+          <span class="nav-label">Planes</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a routerLink="/" class="footer-button" title="Volver al inicio">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m15 18-6-6 6-6"></path>
+            <path d="M9 12h11"></path>
+          </svg>
+          <span class="footer-label">Volver al inicio</span>
+        </a>
+
+        <button type="button" (click)="cerrarSesion()" class="footer-button logout-button" title="Cerrar sesión">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M10 17l5-5-5-5"></path>
+            <path d="M15 12H3"></path>
+            <path d="M15 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4"></path>
+          </svg>
+          <span class="footer-label">Cerrar sesión</span>
+        </button>
+      </div>
     </div>
   </aside>
 
-  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
-    <header class="h-[44px] bg-white border-b border-[#E5E8EE] px-5 flex items-center justify-between shrink-0">
-      <a routerLink="/" class="text-[15px] font-extrabold tracking-[-0.02em] hover:opacity-70 transition">Nuvia</a>
-      <a routerLink="/negocio/personalizacion"
-         class="hidden sm:flex h-[28px] items-center gap-2 rounded-full bg-[#7357F4] px-5 text-[11px] font-bold text-white">
-        Configurar catálogo <span class="text-[10px]">→</span>
-      </a>
-    </header>
-
-    <div class="flex-1 min-h-0 overflow-y-auto overflow-x-hidden">
-      <router-outlet></router-outlet>
-    </div>
+  <div class="business-content">
+    <router-outlet></router-outlet>
   </div>
 </section>
