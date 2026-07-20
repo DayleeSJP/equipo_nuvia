@@ -264,10 +264,14 @@
         </div>
 
         <button
-          type="button"
-          (click)="continuar()"
-          [disabled]="!puedeContinuar()"
-          class="w-full h-11 rounded-full bg-black text-white text-sm font-semibold disabled:bg-neutral-300 disabled:cursor-not-allowed">
+              type="button"
+              (click)="continuar()"
+              [disabled]="!puedeContinuar()"
+              class="w-full h-11 rounded-full bg-black text-white text-sm font-semibold
+              transition-all duration-200 ease-in-out
+              hover:bg-neutral-800 hover:shadow-md
+              active:scale-95 active:bg-neutral-900
+              disabled:bg-neutral-300 disabled:cursor-not-allowed">
           {{ paso === 4 ? (guardando ? 'Guardando...' : 'Confirmar') : 'Continuar' }} →
         </button>
 
